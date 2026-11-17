@@ -271,6 +271,7 @@
       </div>
       <div class="hero-brand">
         <p class="hero-kicker">${esc(site.brand.kicker)}</p>
+        ${site.brand.slogan ? `<p class="hero-slogan">${esc(site.brand.slogan)}</p>` : ""}
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
         <picture class="hero-logo-wrap">
           <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v9.webp")}">

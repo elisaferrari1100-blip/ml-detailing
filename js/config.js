@@ -20,6 +20,7 @@ window.ML_SITE = {
     short: "ML",
     heroWords: ["ML"],
     kicker: "Детейлинг · Нижний Новгород",
+    slogan: "Забота о вашем автомобиле на профессиональном уровне!",
     city: "Нижний Новгород",
     logoMark: "./brand/logo-flat-v9-mark.webp",
     logoLockup: "./brand/logo-flat-v9.webp",
