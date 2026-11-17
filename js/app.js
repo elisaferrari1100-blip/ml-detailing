@@ -50,8 +50,8 @@
   }
 
   function brandMark(sizeClass = "brand-mark") {
-    const src = site.brand.logoMark || "./brand/logo-flat-v7-mark.webp";
-    const fallback = site.brand.logoMarkPng || "./brand/logo-flat-v7-mark.png";
+    const src = site.brand.logoMark || "./brand/logo-flat-v8-mark.webp";
+    const fallback = site.brand.logoMarkPng || "./brand/logo-flat-v8-mark.png";
     return `<picture>
       <source type="image/webp" srcset="${esc(src)}">
       <img class="${sizeClass}" src="${esc(fallback)}" width="59" height="40" alt="${esc(site.brand.name)} — детейлинг">
@@ -273,8 +273,8 @@
         <p class="hero-kicker">${esc(site.brand.kicker)}</p>
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
         <picture class="hero-logo-wrap">
-          <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v7.webp")}">
-          <img class="hero-logo" src="${esc(site.brand.logoHeroPng || "./brand/logo-flat-v7.png")}" alt="" width="806" height="562" decoding="sync" fetchpriority="high" aria-hidden="true">
+          <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v8.webp")}">
+          <img class="hero-logo" src="${esc(site.brand.logoHeroPng || "./brand/logo-flat-v8.png")}" alt="" width="806" height="562" decoding="sync" fetchpriority="high" aria-hidden="true">
         </picture>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
