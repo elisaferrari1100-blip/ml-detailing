@@ -3,16 +3,28 @@
   animation: marquee-right var(--marquee-duration, 40s) linear infinite;
 }
 .works-marquee {
-  overflow: hidden;
-  cursor: default;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  cursor: grab;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-x;
+}
+.works-marquee::-webkit-scrollbar {
+  display: none;
+}
+.works-marquee.is-grabbing {
+  cursor: grabbing;
+}
+.works-marquee.is-grabbing .works-marquee-track {
+  user-select: none;
 }
 @media (prefers-reduced-motion: reduce) {
   .animate-marquee-left,
   .animate-marquee-right {
     animation: none;
-  }
-  .works-marquee {
-    overflow-x: auto;
   }
 }
 

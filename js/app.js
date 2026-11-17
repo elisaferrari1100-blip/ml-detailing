@@ -50,8 +50,8 @@
   }
 
   function brandMark(sizeClass = "brand-mark") {
-    const src = site.brand.logoMark || "./brand/logo-flat-v2-mark.webp";
-    const fallback = site.brand.logoMarkPng || "./brand/logo-flat-v2-mark.png";
+    const src = site.brand.logoMark || "./brand/logo-flat-v3-mark.webp";
+    const fallback = site.brand.logoMarkPng || "./brand/logo-flat-v3-mark.png";
     return `<picture>
       <source type="image/webp" srcset="${esc(src)}">
       <img class="${sizeClass}" src="${esc(fallback)}" width="59" height="40" alt="${esc(site.brand.name)} — детейлинг">
@@ -217,11 +217,10 @@
 
   function worksRow(cards, direction, label) {
     const motion = !reducedMotion();
-    const anim = motion ? (direction === "backward" ? "animate-marquee-right" : "animate-marquee-left") : "";
     const list = cards.map((c) => workCard(c, false)).join("");
     const dup = motion ? cards.map((c) => workCard(c, true)).join("") : "";
-    return `<div class="works-row works-marquee" aria-label="${esc(label)}" tabindex="0">
-      <ul class="m-0 flex list-none p-0 w-max ${anim}" style="--marquee-duration:40s">${list}${dup}</ul>
+    return `<div class="works-row works-marquee" data-works-dir="${direction === "backward" ? "backward" : "forward"}" aria-label="${esc(label)}" tabindex="0">
+      <ul class="works-marquee-track m-0 flex list-none p-0 w-max">${list}${dup}</ul>
     </div>`;
   }
 
@@ -274,8 +273,8 @@
         <p class="hero-kicker">${esc(site.brand.kicker)}</p>
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
         <picture class="hero-logo-wrap">
-          <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v2.webp")}">
-          <img class="hero-logo" src="${esc(site.brand.logoHeroPng || "./brand/logo-flat-v2.png")}" alt="" width="814" height="476" decoding="sync" fetchpriority="high" aria-hidden="true">
+          <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v3.webp")}">
+          <img class="hero-logo" src="${esc(site.brand.logoHeroPng || "./brand/logo-flat-v3.png")}" alt="" width="794" height="540" decoding="sync" fetchpriority="high" aria-hidden="true">
         </picture>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
@@ -1054,6 +1053,111 @@
     });
   }
 
+  function wrapWorksScroll(row, track) {
+    const half = track.scrollWidth / 2;
+    if (half <= 0) return;
+    if (row.scrollLeft >= half) row.scrollLeft -= half;
+    else if (row.scrollLeft < 0) row.scrollLeft += half;
+  }
+
+  function bindWorks() {
+    const rows = document.querySelectorAll(".works-marquee");
+    if (!rows.length) return;
+
+    const worksSection = document.getElementById("works");
+    let sectionVisible = true;
+    if (worksSection) {
+      const io = new IntersectionObserver(([entry]) => {
+        sectionVisible = entry.isIntersecting;
+      }, { threshold: 0 });
+      io.observe(worksSection);
+    }
+
+    const duration = 40000;
+
+    rows.forEach((row) => {
+      const track = row.querySelector(".works-marquee-track");
+      if (!track) return;
+
+      const dir = row.getAttribute("data-works-dir") === "backward" ? -1 : 1;
+      if (dir < 0 && track.scrollWidth > 0) row.scrollLeft = track.scrollWidth / 2;
+      let paused = false;
+      let grabbing = false;
+      let drag = null;
+      let raf = 0;
+      let lastTs = 0;
+
+      const setPaused = (value) => {
+        paused = value;
+      };
+
+      const tick = (ts) => {
+        if (!lastTs) lastTs = ts;
+        const dt = ts - lastTs;
+        lastTs = ts;
+        const half = track.scrollWidth / 2;
+        if (half > 0 && sectionVisible && !paused && !grabbing && !reducedMotion()) {
+          row.scrollLeft += (dir * (half / duration) * dt);
+          wrapWorksScroll(row, track);
+        }
+        raf = requestAnimationFrame(tick);
+      };
+      raf = requestAnimationFrame(tick);
+
+      row.addEventListener("mouseenter", () => setPaused(true));
+      row.addEventListener("mouseleave", () => {
+        if (!grabbing) setPaused(false);
+      });
+
+      row.addEventListener(
+        "wheel",
+        (event) => {
+          const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
+          if (!delta) return;
+          row.scrollLeft += delta;
+          wrapWorksScroll(row, track);
+          event.preventDefault();
+        },
+        { passive: false }
+      );
+
+      row.addEventListener("keydown", (event) => {
+        if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+        const step = 320;
+        row.scrollLeft += event.key === "ArrowLeft" ? -step : step;
+        wrapWorksScroll(row, track);
+        event.preventDefault();
+      });
+
+      row.addEventListener("pointerdown", (event) => {
+        if (event.button !== 0) return;
+        grabbing = true;
+        drag = { id: event.pointerId, x: event.clientX, scroll: row.scrollLeft };
+        row.classList.add("is-grabbing");
+        row.setPointerCapture(event.pointerId);
+        setPaused(true);
+      });
+
+      const endDrag = (event) => {
+        if (!drag || drag.id !== event.pointerId) return;
+        row.classList.remove("is-grabbing");
+        row.releasePointerCapture(event.pointerId);
+        drag = null;
+        grabbing = false;
+        if (!row.matches(":hover")) setPaused(false);
+      };
+
+      row.addEventListener("pointermove", (event) => {
+        if (!drag || drag.id !== event.pointerId) return;
+        row.scrollLeft = drag.scroll - (event.clientX - drag.x);
+        wrapWorksScroll(row, track);
+      });
+
+      row.addEventListener("pointerup", endDrag);
+      row.addEventListener("pointercancel", endDrag);
+    });
+  }
+
   function bindBeforeAfter() {
     document.querySelectorAll("[data-ba]").forEach((card) => {
       const frame = card.querySelector(".ba-frame");
@@ -1288,6 +1392,7 @@
   bindHeader();
   bindStats();
   bindServices();
+  bindWorks();
   bindBeforeAfter();
   bindFormSlot();
   bindGlobal();
