@@ -259,40 +259,7 @@
   }
 
   function renderHeader() {
-    const links = site.nav
-      .map(
-        (item) =>
-          `<li><a href="${esc(item.href)}" class="header-nav-link">${esc(item.label)}</a></li>`
-      )
-      .join("");
-    const mobileLinks = site.nav
-      .map(
-        (item) =>
-          `<li><a href="${esc(item.href)}" class="header-mobile-link">${esc(item.label)}</a></li>`
-      )
-      .join("");
-    return `<header id="site-header">
-      <div class="container-x header-inner">
-        <div class="glass header-bar flex items-center justify-between gap-4 rounded-full py-2 pl-3 pr-2 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.8)]">
-          <a href="#hero" class="brand-lockup" aria-label="${esc(site.brand.name)} — на главную">
-            ${brandMark()}
-          </a>
-          <nav aria-label="Разделы" class="header-nav hidden lg:block">
-            <ul class="m-0 flex list-none gap-1 p-0">${links}</ul>
-          </nav>
-          <div class="header-actions">
-            ${btn({ variant: "primary", href: "#request", className: "!min-h-11 !px-5 !text-[13px]", children: "Записаться" })}
-            <button type="button" class="header-menu-btn lg:hidden" id="header-menu-btn" aria-expanded="false" aria-controls="header-nav-mobile" aria-label="Открыть меню">
-              ${icon("menu", "size-5 header-menu-icon")}
-              ${icon("x", "size-5 header-menu-close")}
-            </button>
-          </div>
-        </div>
-        <nav id="header-nav-mobile" class="header-mobile-nav lg:hidden" hidden>
-          <ul class="m-0 list-none p-0">${mobileLinks}</ul>
-        </nav>
-      </div>
-    </header>`;
+    return window.MLHeader ? window.MLHeader.render() : "";
   }
 
   function formatStat(value, decimals = 0) {
@@ -1018,87 +985,7 @@
   }
 
   function bindHeader() {
-    const header = document.getElementById("site-header");
-    if (!header) return;
-
-    const menuBtn = document.getElementById("header-menu-btn");
-    const mobileNav = document.getElementById("header-nav-mobile");
-
-    const setHeaderOffset = () => {
-      const topbar = document.getElementById("site-topbar");
-      const topbarH = topbar ? Math.ceil(topbar.getBoundingClientRect().height) : 0;
-      const h = Math.ceil(header.getBoundingClientRect().height);
-      document.documentElement.style.setProperty("--topbar-offset", `${topbarH}px`);
-      document.documentElement.style.setProperty("--header-offset", `${h + topbarH}px`);
-    };
-
-    const setScrolled = () => {
-      header.classList.toggle("is-scrolled", window.scrollY > 10);
-      setHeaderOffset();
-    };
-
-    const closeMenu = () => {
-      if (!menuBtn || !mobileNav) return;
-      mobileNav.hidden = true;
-      menuBtn.setAttribute("aria-expanded", "false");
-      menuBtn.setAttribute("aria-label", "Открыть меню");
-      header.classList.remove("is-menu-open");
-      setHeaderOffset();
-    };
-
-    const openMenu = () => {
-      if (!menuBtn || !mobileNav) return;
-      mobileNav.hidden = false;
-      menuBtn.setAttribute("aria-expanded", "true");
-      menuBtn.setAttribute("aria-label", "Закрыть меню");
-      header.classList.add("is-menu-open");
-      setHeaderOffset();
-    };
-
-    const toggleMenu = () => {
-      if (!mobileNav) return;
-      if (mobileNav.hidden) openMenu();
-      else closeMenu();
-    };
-
-    setScrolled();
-    setHeaderOffset();
-
-    let ticking = false;
-    window.addEventListener(
-      "scroll",
-      () => {
-        if (ticking) return;
-        ticking = true;
-        requestAnimationFrame(() => {
-          setScrolled();
-          ticking = false;
-        });
-      },
-      { passive: true }
-    );
-
-    window.addEventListener("resize", () => {
-      if (window.matchMedia("(min-width: 1024px)").matches) closeMenu();
-      setHeaderOffset();
-    });
-
-    menuBtn?.addEventListener("click", (event) => {
-      event.stopPropagation();
-      toggleMenu();
-    });
-
-    mobileNav?.querySelectorAll("a").forEach((link) => {
-      link.addEventListener("click", () => closeMenu());
-    });
-
-    document.addEventListener("keydown", (event) => {
-      if (event.key === "Escape") closeMenu();
-    });
-
-    document.addEventListener("click", (event) => {
-      if (!header.contains(event.target)) closeMenu();
-    });
+    window.MLHeader?.bind();
   }
 
   function bindStats() {
@@ -1422,15 +1309,8 @@
             const id = decodeURIComponent(raw.slice(1));
             if (document.getElementById(id)) {
               event.preventDefault();
+              window.MLHeader?.closeMenu();
               scrollToSectionById(id, { forceSmooth: anchor.hasAttribute("data-smooth-scroll") });
-              const mobileNav = document.getElementById("header-nav-mobile");
-              const menuBtn = document.getElementById("header-menu-btn");
-              if (mobileNav && !mobileNav.hidden) {
-                mobileNav.hidden = true;
-                menuBtn?.setAttribute("aria-expanded", "false");
-                menuBtn?.setAttribute("aria-label", "Открыть меню");
-                document.getElementById("site-header")?.classList.remove("is-menu-open");
-              }
               return;
             }
           }
