@@ -23,6 +23,7 @@
   let modalChromeBound = false;
   let activePopupFile = "";
   let lastFocus = null;
+  let popupLoad = 0;
 
   function esc(value) {
     return String(value ?? "")
@@ -210,6 +211,7 @@
     const modal = getModal();
     if (!modal || modal.hidden) return;
     const returnToLegalList = document.body.classList.contains("legal-page") && DOC_SET.has(currentFile());
+    popupLoad += 1;
     modal.hidden = true;
     document.documentElement.classList.remove("legal-modal-open");
     activePopupFile = "";
@@ -233,6 +235,7 @@
 
     lastFocus = document.activeElement;
     activePopupFile = file;
+    const loadId = ++popupLoad;
     modal.hidden = false;
     document.documentElement.classList.add("legal-modal-open");
 
@@ -249,8 +252,10 @@
 
     try {
       const res = await fetch(docUrl(file), { credentials: "same-origin" });
+      if (loadId !== popupLoad) return;
       if (!res.ok) throw new Error("http-" + res.status);
       const html = await res.text();
+      if (loadId !== popupLoad) return;
       const parsed = new DOMParser().parseFromString(html, "text/html");
       const article = parsed.querySelector("article.legal-doc");
       if (!article) throw new Error("no-article");
@@ -269,6 +274,7 @@
         fill(bodyEl);
       }
     } catch (err) {
+      if (loadId !== popupLoad) return;
       setModalStatus("Не удалось загрузить документ. Попробуйте ещё раз или откройте страницу позже.", true);
     }
   }
@@ -343,8 +349,9 @@
       return;
     }
     if (!data || typeof data !== "object" || Array.isArray(data)) return;
-    if ("legalName" in data) data.legalName = FIELDS.legalName;
-    if ("email" in data) data.email = FIELDS.email;
+    if (!isPlaceholder(FIELDS.legalName)) data.legalName = FIELDS.legalName;
+    if (isPlaceholder(FIELDS.email)) delete data.email;
+    else data.email = FIELDS.email;
     node.textContent = JSON.stringify(data);
   }
 
