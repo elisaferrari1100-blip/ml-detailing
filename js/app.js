@@ -152,10 +152,10 @@
   }
 
   function heading({ eyebrow, title, lead, id, className = "", leadClass = "mt-5" }) {
-    return `<header class="max-w-3xl ${className}">
-      ${eyebrow ? `<p class="eyebrow mb-4">${esc(eyebrow)}</p>` : ""}
-      <h2 id="${id}" class="display text-[clamp(24px,3.6vw,46px)] font-semibold text-ink">${esc(title)}</h2>
-      ${lead ? `<p class="${leadClass} text-base leading-relaxed text-chrome md:text-lg">${esc(lead)}</p>` : ""}
+    return `<header class="page-section__head max-w-3xl ${className}">
+      ${eyebrow ? `<p class="page-section__eyebrow eyebrow mb-4">${esc(eyebrow)}</p>` : ""}
+      <h2 id="${id}" class="page-section__title display text-[clamp(24px,3.6vw,46px)] font-semibold text-ink">${esc(title)}</h2>
+      ${lead ? `<p class="page-section__lead ${leadClass} text-base leading-relaxed text-chrome md:text-lg">${esc(lead)}</p>` : ""}
     </header>`;
   }
 
@@ -372,11 +372,11 @@
   }
 
   function renderAboutStudioAside() {
-    return `<aside id="about" class="faq-studio-aside min-w-0" aria-labelledby="about-title">
-      <div class="about-intro-copy min-w-0 max-w-xl lg:max-w-none">
-        <p class="eyebrow mb-4">О нас</p>
-        <h2 id="about-title" class="display text-[clamp(24px,3.6vw,46px)] font-semibold text-ink">${esc(site.about.brandTitle)}</h2>
-        <p class="mt-5 text-base leading-relaxed text-chrome md:mt-6 md:text-lg">${esc(site.about.text)}</p>
+    return `<aside id="about" class="faq-studio-aside page-subsection min-w-0" aria-labelledby="about-title" data-page-section="about">
+      <div class="about-intro-copy page-section__head min-w-0 max-w-xl lg:max-w-none">
+        <p class="page-section__eyebrow eyebrow mb-4">О нас</p>
+        <h2 id="about-title" class="page-section__title display text-[clamp(24px,3.6vw,46px)] font-semibold text-ink">${esc(site.about.brandTitle)}</h2>
+        <p class="page-section__lead mt-5 text-base leading-relaxed text-chrome md:mt-6 md:text-lg">${esc(site.about.text)}</p>
       </div>
       <ul id="about-stats" class="about-stats-grid m-0 grid w-full max-w-xl list-none grid-cols-2 gap-2.5 p-0 sm:gap-3 lg:max-w-none">${renderAboutStatCards()}</ul>
       <div class="faq-studio-map-wrap min-w-0">${renderAboutMapBlock()}</div>
@@ -404,9 +404,12 @@
       )
       .join("");
     const sect = site.sections.faq || {};
-    return `<section id="faq" aria-labelledby="faq-title" class="section isolate">
-      ${backdrop("hex-ceiling", 0.85, "center top")}
-      <div class="container-x">
+    return window.ML_BODY.section({
+      id: "faq",
+      labelledBy: "faq-title",
+      className: "isolate",
+      html: `${backdrop("hex-ceiling", 0.85, "center top")}
+      <div class="container-x page-section__inner">
         <div class="faq-about-pair text-left">
           <div class="faq-main min-w-0">
             <div class="faq-intro">
@@ -421,8 +424,8 @@
           </div>
           ${renderAboutStudioAside()}
         </div>
-      </div>
-    </section>`;
+      </div>`,
+    });
   }
 
 
@@ -519,9 +522,12 @@
           </div>
         </div>`
       : "";
-    return `<section id="services" aria-labelledby="services-title" class="section isolate">
-      ${backdrop("box-corridor", 0.7)}
-      <div class="container-x">
+    return window.ML_BODY.section({
+      id: "services",
+      labelledBy: "services-title",
+      className: "isolate",
+      html: `${backdrop("box-corridor", 0.7)}
+      <div class="container-x page-section__inner">
         ${heading({ ...site.sections.services, id: "services-title" })}
         <div class="svc-layout ${split ? "svc-layout--split" : ""}" id="svc-layout">
           <div class="svc-main">
@@ -530,8 +536,8 @@
           </div>
           ${frame}
         </div>
-      </div>
-    </section>`;
+      </div>`,
+    });
   }
 
   function clampPos(v) {
@@ -562,12 +568,14 @@
         </figure>`;
       })
       .join("");
-    return `<section id="before-after" aria-labelledby="before-after-title" class="section">
-      <div class="container-x">
+    return window.ML_BODY.section({
+      id: "before-after",
+      labelledBy: "before-after-title",
+      html: `<div class="container-x page-section__inner">
         ${heading({ ...d, id: "before-after-title" })}
         <div class="ba-grid mt-10">${cards}</div>
-      </div>
-    </section>`;
+      </div>`,
+    });
   }
 
   function stars(count, label, className = "size-4") {
@@ -598,9 +606,12 @@
         </li>`;
       })
       .join("");
-    return `<section id="reviews" aria-labelledby="reviews-title" class="section isolate">
-      ${backdrop("box-corridor", 0.7, "center 70%")}
-      <div class="container-x">
+    return window.ML_BODY.section({
+      id: "reviews",
+      labelledBy: "reviews-title",
+      className: "isolate",
+      html: `${backdrop("box-corridor", 0.7, "center 70%")}
+      <div class="container-x page-section__inner">
         <div class="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
           ${heading({ ...site.sections.reviews, id: "reviews-title" })}
           <div class="glass flex flex-wrap items-center gap-x-4 gap-y-2 self-start rounded-3xl px-5 py-4 lg:max-w-md">
@@ -614,8 +625,8 @@
           ${btn({ variant: "icon", attrs: 'aria-label="Предыдущие отзывы" data-reviews-dir="-1"', children: icon("chevron-left", "size-5") })}
           ${btn({ variant: "icon", attrs: 'aria-label="Следующие отзывы" data-reviews-dir="1"', children: icon("chevron-right", "size-5") })}
         </div>
-      </div>
-    </section>`;
+      </div>`,
+    });
   }
 
   function digitsFromPhone(value) {
@@ -800,9 +811,12 @@
   }
 
   function renderRequest() {
-    return `<section id="request" aria-labelledby="request-title" class="section relative isolate">
-      ${backdrop("studio-car", 0.5)}
-      <div class="container-x">
+    return window.ML_BODY.section({
+      id: "request",
+      labelledBy: "request-title",
+      className: "relative isolate",
+      html: `${backdrop("studio-car", 0.5)}
+      <div class="container-x page-section__inner">
         ${heading({ ...site.sections.request, id: "request-title" })}
         <div class="mt-10">${renderPills()}</div>
         <div class="req-layout mt-5">
@@ -812,8 +826,8 @@
           </div>
           ${renderPanel()}
         </div>
-      </div>
-    </section>`;
+      </div>`,
+    });
   }
 
   function renderFooter() {
@@ -874,29 +888,48 @@
     </div>`;
   }
 
+  function renderBody() {
+    const blocks = [{ id: "hero", html: renderHero() }];
+    if (site.worksRow1.length) {
+      blocks.push({
+        id: "works",
+        html: window.ML_BODY.section({
+          id: "works",
+          labelledBy: "works-title",
+          variant: "bleed",
+          className: "overflow-hidden pt-[clamp(56px,7vw,96px)]",
+          html: `<div class="container-x page-section__inner">${heading({ ...site.sections.works, id: "works-title" })}</div>
+                <div class="page-section__bleed mt-10 flex flex-col gap-4 md:mt-12 md:gap-6">
+                  ${worksRow(site.worksRow1, "forward", "Работы, первый ряд")}
+                  ${worksRow(site.worksRow2, "backward", "Работы, второй ряд")}
+                </div>`,
+        }),
+      });
+    }
+    blocks.push({
+      id: "strip-services",
+      html: window.ML_BODY.band(textStrip(site.strips.services, "amber"), "services"),
+    });
+    if (site.services.length) blocks.push({ id: "services", html: renderServices() });
+    const beforeAfter = renderBeforeAfter();
+    if (beforeAfter) blocks.push({ id: "before-after", html: beforeAfter });
+    blocks.push({
+      id: "strip-brand",
+      html: window.ML_BODY.band(textStrip(site.strips.brand), "brand"),
+    });
+    const reviews = renderReviews();
+    if (reviews) blocks.push({ id: "reviews", html: reviews });
+    blocks.push({ id: "request", html: renderRequest() });
+    const faq = renderFaq();
+    if (faq) blocks.push({ id: "faq", html: faq });
+    return window.ML_BODY.compose(blocks);
+  }
+
   function renderPage() {
     const app = document.getElementById("app");
     app.innerHTML = `${renderHeader()}
-      <main class="min-h-screen bg-obsidian text-ink">
-        ${renderHero()}
-        ${
-          site.worksRow1.length
-            ? `<section id="works" aria-labelledby="works-title" class="section overflow-hidden pt-[clamp(56px,7vw,96px)]">
-                <div class="container-x">${heading({ ...site.sections.works, id: "works-title" })}</div>
-                <div class="mt-10 flex flex-col gap-4 md:mt-12 md:gap-6">
-                  ${worksRow(site.worksRow1, "forward", "Работы, первый ряд")}
-                  ${worksRow(site.worksRow2, "backward", "Работы, второй ряд")}
-                </div>
-              </section>`
-            : ""
-        }
-        ${textStrip(site.strips.services, "amber")}
-        ${site.services.length ? renderServices() : ""}
-        ${renderBeforeAfter()}
-        ${textStrip(site.strips.brand)}
-        ${renderReviews()}
-        ${renderRequest()}
-        ${renderFaq()}
+      <main id="page-body" class="page-body min-h-screen bg-obsidian text-ink">
+        ${renderBody()}
       </main>
       ${renderFooter()}
       ${renderCookieBanner()}`;
