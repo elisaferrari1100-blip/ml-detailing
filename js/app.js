@@ -816,52 +816,110 @@
     </section>`;
   }
 
+  function footerSocialIcon(key) {
+    if (key === "vk") {
+      return `<svg class="footer-soc-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M15.684 0H8.316C1.592 0 0 1.592 0 8.316v7.368C0 22.408 1.592 24 8.316 24h7.368C22.408 24 24 22.408 24 15.684V8.316C24 1.592 22.391 0 15.684 0zm3.692 17.123h-1.744c-.66 0-.862-.525-2.049-1.727-1.033-1-1.49-1.135-1.744-1.135-.356 0-.458.102-.458.593v1.575c0 .424-.135.678-1.253.678-1.846 0-3.896-1.118-5.335-3.202C4.624 10.857 4.03 8.57 4.03 8.096c0-.254.102-.491.593-.491h1.744c.44 0 .61.203.78.677.863 2.49 2.303 4.675 2.896 4.675.22 0 .322-.102.322-.66V9.721c-.068-1.186-.695-1.287-.695-1.71 0-.203.17-.407.44-.407h2.744c.373 0 .508.203.508.643v3.473c0 .372.17.508.271.508.22 0 .407-.136.813-.542 1.254-1.406 2.151-3.574 2.151-3.574.119-.254.322-.491.763-.491h1.744c.525 0 .644.27.525.643-.22 1.017-2.354 4.031-2.354 4.031-.186.305-.254.44 0 .78.186.254.796.779 1.203 1.253.745.847 1.32 1.558 1.473 2.049.17.49-.085.744-.576.744z"/></svg>`;
+    }
+    if (key === "telegram") {
+      return `<svg class="footer-soc-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M20.7 4.3 3.9 10.8c-1.15.46-1.14 1.1-.2 1.38l4.3 1.34 10-6.3c.47-.3.9-.14.55.2l-8.1 7.3-.3 4.5c.44 0 .64-.2.88-.44l2.12-2.06 4.4 3.25c.81.45 1.4.22 1.6-.75l2.9-13.7c.3-1.18-.45-1.72-1.25-1.32z"/></svg>`;
+    }
+    if (key === "whatsapp") {
+      return `<svg class="footer-soc-svg" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.04 4.5a7.4 7.4 0 0 0-6.35 11.15L4.5 19.5l3.97-1.04A7.4 7.4 0 1 0 12.04 4.5zm4.3 10.48c-.18.5-1.05.96-1.46 1.02-.37.06-.85.08-1.37-.08-.31-.1-.72-.24-1.24-.46-2.18-.94-3.6-3.14-3.71-3.28-.1-.14-.89-1.18-.89-2.25s.56-1.6.76-1.82c.2-.22.43-.27.58-.27h.41c.13 0 .31-.05.48.37.18.43.6 1.48.65 1.59.06.1.1.23.02.37-.08.14-.12.23-.24.35-.12.12-.25.27-.36.36-.12.1-.24.22-.1.43.14.2.62 1.02 1.33 1.66.91.81 1.68 1.07 1.92 1.19.24.12.38.1.52-.06.14-.16.6-.7.76-.94.16-.24.32-.2.54-.12.22.08 1.4.66 1.64.78.24.12.4.18.46.28.06.1.06.58-.12 1.08z"/></svg>`;
+    }
+    return "";
+  }
+
+  function renderFooterSocial() {
+    const social = site.social || {};
+    const labels = { vk: "ВКонтакте", telegram: "Telegram", whatsapp: "WhatsApp", max: "MAX" };
+    const items = Object.entries(social)
+      .filter(([, value]) => value && value.url)
+      .map(([key, value]) => {
+        const label = labels[key] || value.title || value.name || key;
+        return `<a class="footer-social-link" href="${esc(value.url)}" target="_blank" rel="noopener noreferrer me">${footerSocialIcon(key)}<span>${esc(label)}</span></a>`;
+      });
+    if (!items.length) return "";
+    return `<div class="footer-social" aria-label="Соцсети и мессенджеры">${items.join("")}</div>`;
+  }
+
   function renderFooter() {
     const legal = site.legal || {};
+    const contacts = site.contacts || {};
     const year = new Date().getFullYear();
     const docs = [
-      ["./legal/privacy.html", "Политика обработки персональных данных"],
-      ["./legal/consent.html", "Согласие на обработку ПДн"],
-      ["./legal/terms.html", "Пользовательское соглашение"],
-      ["./legal/cookies.html", "Политика cookie"],
-      ["./legal/offer.html", "Публичная оферта"],
+      ["./legal/privacy.html", "Политика ПДн", "Политика обработки персональных данных"],
+      ["./legal/consent.html", "Согласие", "Согласие на обработку персональных данных"],
+      ["./legal/terms.html", "Пользовательское соглашение", "Пользовательское соглашение"],
+      ["./legal/cookies.html", "Cookie", "Политика cookie"],
+      ["./legal/offer.html", "Оферта", "Публичная оферта"],
     ];
-    const nav = site.nav
+    const nav = (site.nav || [])
       .map((item) => `<li><a href="${esc(item.href)}">${esc(item.label)}</a></li>`)
       .join("");
-    return `<footer class="site-footer">
+    const tel = String(contacts.phone || "").replace(/[^\d+]/g, "");
+    const schedule = `${contacts.schedule || ""}${contacts.scheduleNote || ""}`.trim();
+    const addressHref = contacts.yandexOrgUrl || "#about";
+    const addressExternal = Boolean(contacts.yandexOrgUrl);
+    const reqBits = [
+      legal.legalName ? `<span class="placeholder">${esc(legal.legalName)}</span>` : "",
+      legal.inn ? `<span>ИНН <span class="placeholder">${esc(legal.inn)}</span></span>` : "",
+      legal.ogrn ? `<span>ОГРН/ОГРНИП <span class="placeholder">${esc(legal.ogrn)}</span></span>` : "",
+      legal.email ? `<span>E-mail <span class="placeholder">${esc(legal.email)}</span></span>` : "",
+    ].filter(Boolean);
+
+    return `<footer class="site-footer site-footer--home">
       <div class="container-x">
-        <div class="footer-grid">
+        <div class="footer-home">
           <div class="footer-brand">
-            <a href="#hero" class="brand-lockup" aria-label="${esc(site.brand.name)} — на главную">
+            <a href="#hero" class="brand-lockup footer-logo" aria-label="${esc(site.brand.name)} — на главную">
               ${brandMark()}
-              <span class="brand-name">${esc(site.brand.name)}</span>
+              <span class="footer-wordmark">
+                <span class="brand-name">${esc(site.brand.name)}</span>
+                <span class="footer-wordmark-sub">Detailing</span>
+              </span>
             </a>
             <p class="footer-lead">Детейлинг в Нижнем Новгороде: тонировка, бронирование плёнкой, химчистка салона.</p>
+            ${renderFooterSocial()}
           </div>
-          <div>
+          <nav class="footer-nav" aria-label="Навигация по сайту">
             <p class="footer-heading">Разделы</p>
             <ul class="footer-links">${nav}</ul>
-          </div>
-          <div>
-            <p class="footer-heading">Документы</p>
-            <ul class="footer-links">${docs.map(([href, label]) => `<li><a href="${href}">${esc(label)}</a></li>`).join("")}</ul>
-          </div>
-          <div>
-            <p class="footer-heading">Реквизиты</p>
-            <p class="footer-req">
-              <span class="placeholder">${esc(legal.legalName || "[ИП ФИО]")}</span>
-              <span>ИНН: <span class="placeholder">${esc(legal.inn || "[ИНН]")}</span></span>
-              <span>ОГРН/ОГРНИП: <span class="placeholder">${esc(legal.ogrn || "[ОГРН/ОГРНИП]")}</span></span>
-              <span>E-mail: <span class="placeholder">${esc(legal.email || "[email]")}</span></span>
-              <span>Телефон: <span class="placeholder">${esc(legal.phone || "[телефон]")}</span></span>
-              <span>${esc(site.contacts.address)}</span>
-            </p>
+          </nav>
+          <div class="footer-contacts">
+            <p class="footer-heading">Контакты</p>
+            <ul class="footer-contact-list">
+              ${
+                contacts.phone
+                  ? `<li><a class="footer-contact" href="tel:${esc(tel)}"><span class="footer-ico-wrap">${icon("phone", "footer-ico")}</span><span class="footer-contact-copy"><span class="footer-k">Телефон</span><span class="footer-v">${esc(contacts.phone)}</span></span></a></li>`
+                  : ""
+              }
+              ${
+                contacts.address
+                  ? `<li><a class="footer-contact" href="${esc(addressHref)}"${addressExternal ? ' target="_blank" rel="noopener noreferrer"' : ""}><span class="footer-ico-wrap">${icon("map-pin", "footer-ico")}</span><span class="footer-contact-copy"><span class="footer-k">Адрес</span><span class="footer-v">${esc(contacts.address)}</span></span></a></li>`
+                  : ""
+              }
+              ${
+                schedule
+                  ? `<li><div class="footer-contact"><span class="footer-ico-wrap">${icon("clock", "footer-ico")}</span><span class="footer-contact-copy"><span class="footer-k">Часы работы</span><span class="footer-v">${esc(schedule)}</span></span></div></li>`
+                  : ""
+              }
+            </ul>
           </div>
         </div>
-        <div class="footer-bottom">
-          <span>© ${year} ${esc(site.contacts.studioName)} · ${esc(site.brand.city)}</span>
-          <span><a href="./legal/cookies.html">Cookie</a> · <a href="./legal/offer.html">Цены не являются публичной офертой</a></span>
+        <nav class="footer-legal" aria-label="Юридические документы">
+          <ul class="footer-legal-list">
+            ${docs
+              .map(
+                ([href, label, title]) =>
+                  `<li><a href="${href}" title="${esc(title)}">${esc(label)}</a></li>`
+              )
+              .join("")}
+          </ul>
+        </nav>
+        <div class="footer-meta">
+          <p class="footer-copy">© ${year} ${esc(contacts.studioName || site.brand.name)}${site.brand.city ? ` · ${esc(site.brand.city)}` : ""}</p>
+          <p class="footer-offer"><a href="./legal/offer.html">Цены не являются публичной офертой</a></p>
+          ${reqBits.length ? `<p class="footer-req">${reqBits.join("")}</p>` : ""}
         </div>
       </div>
     </footer>`;
