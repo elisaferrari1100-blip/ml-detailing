@@ -749,7 +749,7 @@
       <div>
         <label class="consent">
           <input type="checkbox" id="lead-consent" name="consent" data-field="consent" ${state.form.consent ? "checked" : ""}>
-          <span>Я даю <a href="./legal/consent.html" target="_blank" rel="noopener">согласие на обработку персональных данных</a> и принимаю <a href="./legal/privacy.html" target="_blank" rel="noopener">политику конфиденциальности</a>.</span>
+          <span>Я даю <a href="./legal/consent.html" data-legal-popup>согласие на обработку персональных данных</a> и принимаю <a href="./legal/privacy.html" data-legal-popup>политику конфиденциальности</a>.</span>
         </label>
         ${consentErr ? `<p class="consent-error mt-1.5" id="lead-consent-error">Нужно согласие на обработку персональных данных</p>` : ""}
       </div>
@@ -817,15 +817,6 @@
   }
 
   function renderFooter() {
-    const legal = site.legal || {};
-    const year = new Date().getFullYear();
-    const docs = [
-      ["./legal/privacy.html", "Политика обработки персональных данных"],
-      ["./legal/consent.html", "Согласие на обработку ПДн"],
-      ["./legal/terms.html", "Пользовательское соглашение"],
-      ["./legal/cookies.html", "Политика cookie"],
-      ["./legal/offer.html", "Публичная оферта"],
-    ];
     const nav = site.nav
       .map((item) => `<li><a href="${esc(item.href)}">${esc(item.label)}</a></li>`)
       .join("");
@@ -843,31 +834,22 @@
             <p class="footer-heading">Разделы</p>
             <ul class="footer-links">${nav}</ul>
           </div>
-          <div>
-            <p class="footer-heading">Документы</p>
-            <ul class="footer-links">${docs.map(([href, label]) => `<li><a href="${href}">${esc(label)}</a></li>`).join("")}</ul>
-          </div>
-          <div>
-            <p class="footer-heading">Реквизиты</p>
-            <p class="footer-req">
-              <span class="placeholder">${esc(legal.legalName || "[ИП ФИО]")}</span>
-              <span>ИНН: <span class="placeholder">${esc(legal.inn || "[ИНН]")}</span></span>
-              <span>ОГРН/ОГРНИП: <span class="placeholder">${esc(legal.ogrn || "[ОГРН/ОГРНИП]")}</span></span>
-              <span>E-mail: <span class="placeholder">${esc(legal.email || "[email]")}</span></span>
-              <span>Телефон: <span class="placeholder">${esc(legal.phone || "[телефон]")}</span></span>
-              <span>${esc(site.contacts.address)}</span>
-            </p>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span>© ${year} ${esc(site.contacts.studioName)} · ${esc(site.brand.city)}</span>
-          <span><a href="./legal/cookies.html">Cookie</a> · <a href="./legal/offer.html">Цены не являются публичной офертой</a></span>
         </div>
       </div>
     </footer>`;
   }
 
+  function renderLegalBar() {
+    if (window.ML_LEGAL && typeof window.ML_LEGAL.barHtml === "function") {
+      return window.ML_LEGAL.barHtml({ prefix: "./legal/" });
+    }
+    return "";
+  }
+
   function renderCookieBanner() {
+    if (window.ML_LEGAL && typeof window.ML_LEGAL.cookieHtml === "function") {
+      return window.ML_LEGAL.cookieHtml("./legal/cookies.html");
+    }
     return `<div id="cookie-banner" class="cookie-banner" hidden role="dialog" aria-label="Уведомление об использовании cookie">
       <p>Мы используем cookie, чтобы сайт работал стабильно и было удобнее пользоваться формой заявки. Подробности — в <a href="./legal/cookies.html">политике cookie</a>.</p>
       <button type="button" class="btn btn-primary" data-cookie-accept><span class="relative inline-flex items-center gap-2">Понятно</span></button>
@@ -899,6 +881,7 @@
         ${renderFaq()}
       </main>
       ${renderFooter()}
+      ${renderLegalBar()}
       ${renderCookieBanner()}`;
   }
 
@@ -1518,6 +1501,9 @@
 
   applyTheme();
   renderPage();
+  if (window.ML_LEGAL && typeof window.ML_LEGAL.syncSchema === "function") {
+    window.ML_LEGAL.syncSchema();
+  }
   if (location.hash.length > 1) {
     const id = decodeURIComponent(location.hash.slice(1));
     if (document.getElementById(id)) {
@@ -1534,6 +1520,10 @@
   bindCookieBanner();
 
   function bindCookieBanner() {
+    if (window.ML_LEGAL && typeof window.ML_LEGAL.bindCookie === "function") {
+      window.ML_LEGAL.bindCookie();
+      return;
+    }
     const banner = document.getElementById("cookie-banner");
     if (!banner) return;
     try {
