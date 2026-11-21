@@ -1025,8 +1025,11 @@
     const mobileNav = document.getElementById("header-nav-mobile");
 
     const setHeaderOffset = () => {
+      const topbar = document.getElementById("site-topbar");
+      const topbarH = topbar ? Math.ceil(topbar.getBoundingClientRect().height) : 0;
       const h = Math.ceil(header.getBoundingClientRect().height);
-      document.documentElement.style.setProperty("--header-offset", `${h}px`);
+      document.documentElement.style.setProperty("--topbar-offset", `${topbarH}px`);
+      document.documentElement.style.setProperty("--header-offset", `${h + topbarH}px`);
     };
 
     const setScrolled = () => {
