@@ -20,6 +20,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Unbounded:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="../css/styles.css" />
     <link rel="stylesheet" href="../css/extras.css" />
+    <link rel="stylesheet" href="../css/legal.css" />
     <style>
       :root {
         --color-amber: #e5b869;
@@ -36,10 +37,12 @@
   <body class="legal-page">
     <header class="legal-header">
       <div class="container-x">
-        <div class="glass flex items-center justify-between gap-4 rounded-full py-2 pl-3 pr-3">
+        <div class="glass legal-topbar flex items-center justify-between gap-4 rounded-full py-2 pl-3 pr-3">
           <a href="../index.html" class="brand-lockup" aria-label="ML — на главную">
-            <img class="brand-mark" src="../brand/logo-mark.webp" width="59" height="40" alt="ML — детейлинг">
-            <span class="brand-name">ML</span>
+            <picture>
+              <source type="image/webp" srcset="../brand/logo-flat-v9-mark.webp">
+              <img class="brand-mark" src="../brand/logo-flat-v9-mark.png" width="59" height="40" alt="ML — детейлинг">
+            </picture>
           </a>
           <a class="btn btn-primary !min-h-11 !px-5 !text-[13px]" href="../index.html#request"><span class="relative inline-flex items-center gap-2">На сайт</span></a>
         </div>
@@ -48,14 +51,22 @@
     <main class="legal-main">
       <div class="container-x">
         <article class="legal-doc">
+          <p class="legal-kicker">Документы</p>
+          <nav class="legal-switch" aria-label="Другие документы">
+            <a href="./privacy.html">Политика ПДн</a>
+            <a href="./consent.html">Согласие</a>
+            <a href="./terms.html">Соглашение</a>
+            <a href="./cookies.html">Cookie</a>
+            <a href="./offer.html" aria-current="page">Оферта</a>
+          </nav>
           <h1>Публичная оферта и правила оказания услуг</h1>
           <p class="legal-meta">Студия ML · Нижний Новгород, ул. Коминтерна, 43А, корп. 2<br>Шаблон документа. Дата редакции: 16 ноября 2026 г.</p>
-          <p class="legal-note">Это шаблон документа для размещения на сайте. Перед публикацией заполните реквизиты в квадратных скобках и при необходимости покажите текст юристу. Мы не подставляли вымышленные ФИО, ИНН, ОГРН или e-mail.</p>
+          <p class="legal-note">Исполнитель, ИНН и телефон подставляются из настроек сайта. Почты пока нет, ОГРНИП владелец ещё не передал — эти поля остаются в квадратных скобках. Текст шаблонный: перед тем как опираться на него как на окончательный, покажите его юристу.</p>
           
           <p class="legal-note">Важно: цены, перечень услуг и калькулятор на Сайте носят информационный характер и <strong>не являются публичной офертой</strong> в смысле пункта 2 статьи 437 Гражданского кодекса Российской Федерации. Точная стоимость и сроки согласовываются после осмотра автомобиля.</p>
-          <p>Настоящий документ описывает общие правила оказания услуг детейлинга студией ML и условия, на которых может заключаться договор. Это шаблон: реквизиты исполнителя нужно заполнить перед публикацией.</p>
+          <p>Настоящий документ описывает общие правила оказания услуг детейлинга студией ML и условия, на которых может заключаться договор. Пока в реквизитах стоят пометки в квадратных скобках, эти поля ещё не заполнены.</p>
           <h2>1. Исполнитель</h2>
-          <p><span class="placeholder">[ИП ФИО]</span>, ИНН <span class="placeholder">[ИНН]</span>, ОГРН/ОГРНИП <span class="placeholder">[ОГРН/ОГРНИП]</span>. Контакты: <span class="placeholder">[email]</span>, <span class="placeholder">[телефон]</span>. Место оказания услуг: Нижний Новгород, ул. Коминтерна, 43А, корп. 2. Режим работы студии, указанный на Сайте: понедельник–пятница, 10:00–20:00.</p>
+          <p><span class="placeholder" data-legal="legalName">[ИП ФИО]</span>, ИНН <span class="placeholder" data-legal="inn">[ИНН]</span>, ОГРН/ОГРНИП <span class="placeholder" data-legal="ogrn">[ОГРН/ОГРНИП]</span>. Контакты: <span class="placeholder" data-legal="email">[email]</span>, <span class="placeholder" data-legal="phone">[телефон]</span>. Место оказания услуг: Нижний Новгород, ул. Коминтерна, 43А, корп. 2. Режим работы студии, указанный на Сайте: понедельник–пятница, 10:00–20:00.</p>
           <h2>2. Предмет</h2>
           <p>Исполнитель оказывает услуги по уходу за автомобилем (в том числе тонировка стёкол, бронирование плёнкой, химчистка салона, полировка и защита фар, антихром, мойка двигателя и иные работы, согласованные сторонами). Конкретный перечень, материалы и срок фиксируются при записи либо в заказ-наряде / договоре.</p>
           <h2>3. Как заключается договор</h2>
@@ -65,7 +76,7 @@
           <h2>5. Обязанности сторон</h2>
           <p>Заказчик предоставляет достоверные сведения об автомобиле и доступ к нему в согласованное время, забирает автомобиль в срок и своевременно оплачивает работы. Исполнитель оказывает услуги квалифицированно, с разумной заботливостью о имуществе заказчика, и информирует о существенных дополнительных работах до их начала — кроме случаев, когда промедление создаёт риск повреждения автомобиля.</p>
           <h2>6. Сроки и отмена записи</h2>
-          <p>Срок выполнения согласовывается индивидуально. Если нужна отмена или перенос записи, сообщите студии как можно раньше по телефону +7 (999) 120-44-88 или <span class="placeholder">[телефон]</span>. Последствия неявки и переноса стороны могут уточнить при записи.</p>
+          <p>Срок выполнения согласовывается индивидуально. Если нужна отмена или перенос записи, сообщите студии как можно раньше по телефону <span class="placeholder" data-legal="phone">[телефон]</span>. Последствия неявки и переноса стороны могут уточнить при записи.</p>
           <h2>7. Приёмка и претензии</h2>
           <p>Результат рекомендуется осмотреть при выдаче автомобиля. Претензии по видимым недостаткам предъявляются при приёмке, по скрытым — в разумный срок после их обнаружения, в пределах гарантии, если она предоставлена на конкретную услугу, и требований закона о защите прав потребителей (если заказчик — потребитель).</p>
           <h2>8. Ответственность</h2>
@@ -78,44 +89,33 @@
         </article>
       </div>
     </main>
-    <footer class="site-footer">
-      <div class="container-x">
-        <div class="footer-grid">
-          <div>
-            <a href="../index.html" class="brand-lockup" aria-label="ML — на главную">
-              <img class="brand-mark" src="../brand/logo-mark.webp" width="71" height="48" alt="ML — детейлинг">
-              <span class="brand-name">ML</span>
-            </a>
-            <p class="footer-lead">Детейлинг в Нижнем Новгороде.</p>
-            <p class="mt-4"><a href="https://vk.ru/mldetailing" rel="noopener noreferrer me" target="_blank">Мы ВКонтакте</a></p>
-          </div>
-          <div>
-            <p class="footer-heading">Документы</p>
-            <ul class="footer-links">
+    <div id="legal-bar-mount">
+      <noscript>
+        <section class="legal-bar" aria-label="Юридическая информация">
+          <div class="container-x legal-bar-inner">
+            <p class="legal-bar-copy">© 2026 ML · Нижний Новгород</p>
+            <ul class="legal-req">
+              <li><span class="legal-k">Исполнитель</span><span class="legal-v"><span class="placeholder" data-legal="legalName">[ИП ФИО]</span></span></li>
+              <li><span class="legal-k">ИНН</span><span class="legal-v"><span class="placeholder" data-legal="inn">[ИНН]</span></span></li>
+              <li><span class="legal-k">ОГРН/ОГРНИП</span><span class="legal-v"><span class="placeholder" data-legal="ogrn">[ОГРН/ОГРНИП]</span></span></li>
+              <li><span class="legal-k">E-mail</span><span class="legal-v"><span class="placeholder" data-legal="email">[email]</span></span></li>
+              <li><span class="legal-k">Телефон</span><span class="legal-v"><span class="placeholder" data-legal="phone">[телефон]</span></span></li>
+              <li><span class="legal-k">Адрес</span><span class="legal-v">Нижний Новгород, ул. Коминтерна, 43А, корп. 2</span></li>
+            </ul>
+            <ul class="legal-docs">
               <li><a href="./privacy.html">Политика обработки персональных данных</a></li>
               <li><a href="./consent.html">Согласие на обработку ПДн</a></li>
               <li><a href="./terms.html">Пользовательское соглашение</a></li>
               <li><a href="./cookies.html">Политика cookie</a></li>
               <li><a href="./offer.html">Публичная оферта</a></li>
             </ul>
+            <p class="legal-bar-offer"><a href="./offer.html">Цены не являются публичной офертой</a></p>
           </div>
-          <div>
-            <p class="footer-heading">Реквизиты</p>
-            <p class="footer-req">
-              <span class="placeholder">[ИП ФИО]</span>
-              <span>ИНН: <span class="placeholder">[ИНН]</span></span>
-              <span>ОГРН/ОГРНИП: <span class="placeholder">[ОГРН/ОГРНИП]</span></span>
-              <span>E-mail: <span class="placeholder">[email]</span></span>
-              <span>Телефон: <span class="placeholder">[телефон]</span></span>
-              <span>Нижний Новгород, ул. Коминтерна, 43А, корп. 2</span>
-            </p>
-          </div>
-        </div>
-        <div class="footer-bottom">
-          <span>© 2026 ML · Нижний Новгород</span>
-          <a href="../index.html">Вернуться на сайт</a>
-        </div>
-      </div>
-    </footer>
+        </section>
+      </noscript>
+    </div>
+    <div id="cookie-banner-mount"></div>
+    <script src="../js/config.js"></script>
+    <script src="../js/legal.js"></script>
   </body>
 </html>
