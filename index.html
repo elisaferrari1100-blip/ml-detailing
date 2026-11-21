@@ -56,7 +56,7 @@
         --font-display: "Unbounded", ui-sans-serif, system-ui, sans-serif;
         --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
       }
-      html { scroll-behavior: smooth; background: #070709; scroll-padding-top: var(--header-offset, 6.5rem); }
+      html { scroll-behavior: smooth; background: #070709; scroll-padding-top: calc(var(--header-offset, 6.5rem) + var(--section-scroll-extra, 2.75rem)); }
       body { margin: 0; background: #070709; color: #fafafa; }
     </style>
 
@@ -126,7 +126,6 @@
         "reviewCount": 78
       },
       "sameAs": [
-        "https://vk.ru/mldetailing",
         "https://yandex.ru/maps/org/ml/13418438493/"
       ],
       "priceRange": "₽₽",
@@ -152,7 +151,6 @@
     <noscript>
       <p style="max-width:40rem;margin:2rem auto;padding:0 1rem;font-family:Inter,sans-serif;color:#fafafa">
         Для просмотра сайта студии ML включите JavaScript. Детейлинг в Нижнем Новгороде: ул. Коминтерна, 43А, корп. 2. Телефон: +7 (999) 120-44-88.
-        Сообщество ВКонтакте: <a href="https://vk.ru/mldetailing" style="color:#e5b869">vk.ru/mldetailing</a>.
       </p>
     </noscript>
     <script src="./js/config.js"></script>

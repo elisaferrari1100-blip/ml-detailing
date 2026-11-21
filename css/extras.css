@@ -44,10 +44,19 @@
   width: auto;
   border-radius: 0;
 }
+#site-header .brand-lockup picture {
+  display: block;
+  line-height: 0;
+}
 #site-header .brand-lockup img,
 #site-header .brand-mark {
-  height: 38px;
+  height: 36px;
   width: auto;
+  max-width: 100%;
+}
+#site-header .brand-lockup {
+  margin-inline-start: 2px;
+  padding-inline-start: 6px;
 }
 .brand-lockup .brand-name {
   font-family: var(--font-display);
@@ -123,6 +132,295 @@
   color: var(--color-chrome);
 }
 .vk-card p { margin: 0; }
+
+/* ——— Ритм секций (чуть плотнее, без слипания) ——— */
+.section {
+  padding-block: clamp(48px, 6.5vw, 96px);
+}
+main .section + .section {
+  padding-block-start: clamp(36px, 5vw, 72px);
+}
+
+/* ——— FAQ + студия (ритм как у .section + heading + mt-10) ——— */
+.faq-about-pair {
+  --faq-pair-gap: clamp(2.5rem, 5vw, 4rem);
+  --faq-stack-gap: clamp(2rem, 3.5vw, 2.75rem);
+  --faq-list-gap: 0.625rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--faq-pair-gap);
+}
+.faq-main {
+  display: flex;
+  flex-direction: column;
+  gap: var(--faq-stack-gap);
+}
+.faq-intro {
+  max-width: 40rem;
+}
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--faq-list-gap);
+}
+.faq-studio-aside {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  width: 100%;
+}
+.faq-studio-aside .about-intro-copy {
+  margin-block-end: var(--faq-stack-gap);
+}
+.faq-studio-aside .about-stats-grid {
+  margin-block: 0;
+  margin-block-end: clamp(0.625rem, 1.25vw, 1rem);
+}
+.faq-studio-map-wrap {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  width: 100%;
+}
+#faq .about-intro-aside {
+  gap: clamp(1rem, 2vw, 1.25rem);
+}
+@media (min-width: 640px) {
+  .faq-about-pair {
+    --faq-list-gap: 0.75rem;
+  }
+}
+@media (min-width: 1024px) {
+  .faq-about-pair {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(2rem, 4vw, 3.5rem);
+    row-gap: 0;
+    align-items: start;
+  }
+  #faq .faq-about-pair {
+    grid-template-areas: "main studio";
+  }
+  .faq-main {
+    grid-area: main;
+  }
+  #faq .faq-intro {
+    max-width: none;
+  }
+  #faq .faq-studio-aside {
+    grid-area: studio;
+    align-self: start;
+  }
+}
+#faq #about {
+  scroll-margin-top: calc(var(--header-offset, 6.5rem) + var(--section-scroll-extra));
+}
+.faq-summary::-webkit-details-marker {
+  display: none;
+}
+.faq-details[open] .faq-summary {
+  color: var(--color-ink);
+}
+.faq-details[open] {
+  border-color: color-mix(in srgb, var(--color-amber) 28%, transparent);
+}
+.faq-chevron {
+  transition: transform 0.28s ease;
+}
+.faq-details[open] .faq-chevron {
+  transform: rotate(180deg);
+}
+.faq-answer-reveal {
+  overflow: hidden;
+}
+.faq-details::details-content {
+  block-size: 0;
+  overflow: hidden;
+  transition:
+    block-size 0.4s ease,
+    content-visibility 0.4s allow-discrete;
+  interpolate-size: allow-keywords;
+}
+.faq-details[open]::details-content {
+  block-size: auto;
+  content-visibility: visible;
+}
+@starting-style {
+  .faq-details[open]::details-content {
+    block-size: 0;
+  }
+}
+.faq-details[open] .faq-answer {
+  animation: faq-answer-in 0.38s ease both;
+}
+@keyframes faq-answer-in {
+  from {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@supports not (interpolate-size: allow-keywords) {
+  .faq-details::details-content {
+    block-size: auto;
+    transition: none;
+  }
+  .faq-answer-reveal {
+    max-height: 0;
+    opacity: 0;
+    transition:
+      max-height 0.42s ease,
+      opacity 0.32s ease;
+  }
+  .faq-details[open] .faq-answer-reveal {
+    max-height: 32rem;
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .faq-details::details-content {
+    transition: none;
+  }
+  .faq-details[open] .faq-answer {
+    animation: none;
+  }
+  .faq-details[open] .faq-answer-reveal {
+    transition: none;
+  }
+  .faq-chevron {
+    transition: none;
+  }
+}
+
+/* ——— О нас: студия + контакты + карта ——— */
+.about-unified {
+  border: 1px solid color-mix(in srgb, var(--color-ink) 10%, transparent);
+  box-shadow: 0 32px 96px -56px rgba(0, 0, 0, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(2.25rem, 4vw, 3.25rem);
+}
+.about-unified-divider {
+  height: 1px;
+  margin: 0;
+  border: 0;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in srgb, var(--color-ink) 12%, transparent) 20%,
+    color-mix(in srgb, var(--color-ink) 12%, transparent) 80%,
+    transparent
+  );
+}
+.about-unified-bottom {
+  padding-top: clamp(0.25rem, 1vw, 0.5rem);
+}
+@media (min-width: 1024px) {
+  .about-unified-intro {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    column-gap: clamp(2rem, 4vw, 3.5rem);
+    align-items: start;
+  }
+  .about-intro-aside {
+    width: 100%;
+  }
+  .about-map.about-map--intro {
+    flex: none;
+    min-height: clamp(280px, 42vh, 440px);
+    height: auto;
+  }
+  .about-map-meta {
+    flex-shrink: 0;
+  }
+  .about-stats-grid {
+    grid-template-rows: auto auto;
+  }
+  .about-stat--compact {
+    display: flex;
+    min-height: 0;
+  }
+  .about-stat--bar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+  }
+}
+.about-stat--bar {
+  width: 100%;
+  border: 1px solid color-mix(in srgb, var(--color-ink) 12%, transparent);
+  background: color-mix(in srgb, var(--color-surface) 88%, transparent);
+}
+.about-stats-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.about-map-actions {
+  width: 100%;
+}
+.about-map-actions .about-map-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  justify-content: center;
+  border-radius: 999px;
+  min-height: 2.75rem;
+  padding-inline: clamp(0.45rem, 1.2vw, 0.85rem);
+  font-size: clamp(10px, 1.05vw, 12px);
+  font-weight: 600;
+  line-height: 1.2;
+  text-align: center;
+  box-shadow: 0 10px 32px -18px rgba(0, 0, 0, 0.85);
+}
+.about-map-actions .about-map-btn .relative {
+  justify-content: center;
+  gap: 0.35rem;
+}
+.about-map-actions .about-map-btn .btn-arrow {
+  display: none;
+}
+@media (min-width: 1280px) {
+  .about-map-actions {
+    gap: 0.65rem;
+  }
+  .about-map-actions .about-map-btn {
+    padding-inline: 0.95rem;
+    font-size: 12px;
+  }
+  .about-map-actions .about-map-btn .btn-arrow {
+    display: inline-flex;
+    width: 0.95rem;
+    height: 0.95rem;
+  }
+}
+.about-intro-stack .about-vk-wrap {
+  margin-top: 0.15rem;
+}
+.about-intro-stack .about-vk-wrap .vk-card {
+  border-radius: 1.35rem;
+}
+.about-stat-desc {
+  max-width: 22rem;
+}
+.about-vk-wrap .vk-card {
+  margin-top: 0;
+  padding: 1.25rem 1.35rem;
+  border-radius: 20px;
+  gap: 0.85rem;
+}
+.about-vk-wrap .vk-card p {
+  font-size: 14px;
+  line-height: 1.55;
+}
+.about-map {
+  min-height: clamp(280px, 42vh, 440px);
+}
+.map-frame.about-map--intro {
+  position: relative;
+}
+.map-frame.about-map--intro iframe {
+  display: block;
+}
 
 /* ——— Site footer ——— */
 .site-footer {
@@ -267,18 +565,25 @@
 }
 
 /* ——— Sticky header, stronger blur, brighter nav ——— */
+:root {
+  /* Доп. отступ для нативного якоря (если JS не сработал) */
+  --section-scroll-extra: clamp(2.75rem, 5.5vw, 5rem);
+  /* Зазор между шапкой и заголовком раздела при программной прокрутке */
+  --section-title-scroll-gap: clamp(0.75rem, 2vw, 1.25rem);
+  --works-title-scroll-gap: var(--section-title-scroll-gap);
+}
 html {
-  scroll-padding-top: var(--header-offset, 6.5rem);
+  scroll-padding-top: calc(var(--header-offset, 6.5rem) + var(--section-scroll-extra));
 }
 #works,
 #services,
 #reviews,
-#contacts,
 #request,
+#faq,
 #about,
 #hero,
 #before-after {
-  scroll-margin-top: var(--header-offset, 6.5rem);
+  scroll-margin-top: calc(var(--header-offset, 6.5rem) + var(--section-scroll-extra));
 }
 
 #site-header {
@@ -302,29 +607,38 @@ html {
 }
 #site-header .header-bar,
 #site-header .glass.header-bar {
-  -webkit-backdrop-filter: blur(22px) saturate(1.2);
-  backdrop-filter: blur(22px) saturate(1.2);
-  background: rgba(7, 7, 9, 0.42);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  -webkit-backdrop-filter: blur(22px) saturate(1.15);
+  backdrop-filter: blur(22px) saturate(1.15);
+  background: rgba(7, 7, 9, 0.28);
+  border: 1px solid rgba(255, 255, 255, 0.11);
+  box-shadow: 0 10px 40px -24px rgba(0, 0, 0, 0.42);
+  transition:
+    background-color 0.28s ease,
+    border-color 0.28s ease,
+    box-shadow 0.28s ease;
+  /* больше воздуха слева: mark в файле прижат к краю и «вылезал» из скругления */
+  padding-left: 1.25rem;
+  padding-right: 0.75rem;
 }
 #site-header.is-scrolled {
-  background: rgba(7, 7, 9, 0.78);
-  -webkit-backdrop-filter: blur(24px) saturate(1.25);
-  backdrop-filter: blur(24px) saturate(1.25);
-  border-bottom-color: rgba(255, 255, 255, 0.12);
-  box-shadow: 0 10px 32px -12px rgba(0, 0, 0, 0.7);
+  /* при скролле — без второй полосы на всю ширину, только пилюля .header-bar */
+  background: transparent;
+  border-bottom-color: transparent;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
 }
 #site-header.is-scrolled .header-inner {
-  padding-top: 8px;
-  padding-bottom: 8px;
+  padding-top: 12px;
+  padding-bottom: 0;
 }
 #site-header.is-scrolled .header-bar,
 #site-header.is-scrolled .glass.header-bar {
-  -webkit-backdrop-filter: blur(24px) saturate(1.25);
-  backdrop-filter: blur(24px) saturate(1.25);
-  background: rgba(10, 11, 14, 0.88);
-  border-color: rgba(255, 255, 255, 0.16);
-  box-shadow: 0 10px 40px -20px rgba(0, 0, 0, 0.8);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+  background: rgba(8, 9, 11, 0.52);
+  border-color: rgba(255, 255, 255, 0.13);
+  box-shadow: 0 10px 36px -22px rgba(0, 0, 0, 0.48);
 }
 
 #site-header .header-nav-link {
@@ -377,7 +691,7 @@ html {
   margin-bottom: 8px;
   padding: 8px;
   border-radius: 20px;
-  background: rgba(7, 7, 9, 0.92);
+  background: rgba(7, 7, 9, 0.72);
   -webkit-backdrop-filter: blur(24px) saturate(1.2);
   backdrop-filter: blur(24px) saturate(1.2);
   border: 1px solid rgba(255, 255, 255, 0.12);
@@ -402,10 +716,11 @@ html {
   outline: none;
 }
 #site-header.is-menu-open {
-  background: rgba(7, 7, 9, 0.86);
-  -webkit-backdrop-filter: blur(24px) saturate(1.25);
-  backdrop-filter: blur(24px) saturate(1.25);
-  border-bottom-color: rgba(255, 255, 255, 0.1);
+  background: transparent;
+  border-bottom-color: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
 }
 
 /* ——— Chrome hero logo (outside .hero-frame so mask/overflow cannot clip it) ——— */
@@ -418,31 +733,20 @@ html {
   width: 100%;
   padding: 0 16px;
   text-align: center;
-  pointer-events: none;
   box-sizing: border-box;
 }
 .hero-brand .hero-kicker {
-  max-width: 100%;
-}
-.hero-brand .hero-slogan {
-  max-width: min(100%, 34rem);
-  margin: 0.5em auto 0;
-  font-family: var(--font-sans);
-  font-size: clamp(12px, 1.25vw, 14px);
-  font-weight: 400;
-  letter-spacing: 0.02em;
-  line-height: 1.45;
-  text-transform: none;
-  color: color-mix(in srgb, var(--color-ink) 58%, transparent);
-  animation: fade-up 1s var(--ease-out-soft) 0.35s both;
-}
-@media (max-width: 767px) {
-  .hero-brand .hero-slogan {
-    max-width: 22rem;
-    margin-top: 0.4em;
-    font-size: clamp(12px, 3.3vw, 14px);
-    letter-spacing: 0.01em;
-  }
+  max-width: none;
+  margin: clamp(14px, 2.2vw, 22px) auto 0;
+  padding: 0 12px;
+  font-size: clamp(12px, 2.1vw, 26px);
+  font-weight: 600;
+  letter-spacing: clamp(0.08em, 1.6vw, 0.28em);
+  line-height: 1.35;
+  white-space: nowrap;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
 }
 .hero-logo-wrap,
 .hero-logo {
@@ -465,4 +769,37 @@ html {
     width: min(70vw, 260px);
     max-height: calc(38svh);
   }
+}
+
+
+/* Стрелка вниз на первом экране */
+.hero-scroll-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  color: #fafafa;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.hero-scroll-arrow:hover,
+.hero-scroll-arrow:focus-visible {
+  color: #e5b869;
+  border-color: rgba(229, 184, 105, 0.6);
+  background: rgba(229, 184, 105, 0.12);
+}
+.hero-scroll-arrow svg {
+  animation: hero-arrow-bob 1.8s ease-in-out infinite;
+}
+@keyframes hero-arrow-bob {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-arrow svg { animation: none; }
 }

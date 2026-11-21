@@ -45,10 +45,6 @@
     return `<svg class="${className}" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" ${fill} stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONS[name] || ""}</svg>`;
   }
 
-  function vkIcon(className = "size-5") {
-    return `<svg class="${className}" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"><path d="M12.785 16.241s.288-.032.436-.192c.136-.148.132-.427.132-.427s-.02-1.304.587-1.496c.599-.19 1.367 1.26 2.18 1.814.616.42 1.084.327 1.084.327l2.176-.03s1.138-.071.598-.964c-.044-.073-.314-.661-1.614-1.869-1.361-1.264-1.179-1.059.46-3.245.997-1.332 1.396-2.145 1.272-2.493-.118-.332-.847-.244-.847-.244l-2.449.015s-.182-.025-.316.056c-.131.079-.216.263-.216.263s-.386 1.028-.9 1.902c-1.084 1.842-1.518 1.939-1.696 1.825-.413-.266-.31-1.068-.31-1.638 0-1.78.27-2.52-.526-2.712-.265-.064-.46-.106-1.138-.113-.87-.009-1.606.003-2.023.207-.278.136-.492.44-.362.457.161.022.525.098.718.363.25.343.241 1.114.241 1.114s.143 2.126-.334 2.389c-.328.182-.778-.19-1.744-1.887-.495-.868-.869-1.828-.869-1.828s-.072-.176-.2-.27c-.156-.115-.374-.151-.374-.151l-2.328.015s-.35.01-.478.162c-.114.136-.009.417-.009.417s1.816 4.247 3.872 6.385c1.885 1.96 4.026 1.831 4.026 1.831h.972z"/></svg>`;
-  }
-
   function brandMark(sizeClass = "brand-mark") {
     const src = site.brand.logoMark || "./brand/logo-flat-v9-mark.webp";
     const fallback = site.brand.logoMarkPng || "./brand/logo-flat-v9-mark.png";
@@ -56,28 +52,6 @@
       <source type="image/webp" srcset="${esc(src)}">
       <img class="${sizeClass}" src="${esc(fallback)}" width="59" height="40" alt="${esc(site.brand.name)} — детейлинг">
     </picture>`;
-  }
-
-  function vkLink(className = "soc-icon", label = "Мы ВКонтакте") {
-    const vk = site.social && site.social.vk;
-    if (!vk || !vk.url) return "";
-    return `<a class="${className}" href="${esc(vk.url)}" target="_blank" rel="noopener noreferrer me" aria-label="${esc(label)}" title="${esc(vk.name || label)}">${vkIcon()}</a>`;
-  }
-
-  function renderVkCard() {
-    const vk = site.social && site.social.vk;
-    if (!vk || !vk.url) return "";
-    return `<aside class="vk-card glass" aria-label="${esc(vk.title)}">
-      <div class="vk-card-head">
-        ${vkLink()}
-        <div>
-          <span class="vk-card-title">${esc(vk.title)}</span>
-          <span class="vk-card-name">${esc(vk.name)}</span>
-        </div>
-      </div>
-      <p class="text-sm leading-relaxed text-chrome">${esc(vk.description)}</p>
-      ${btn({ variant: "glass", arrow: true, href: vk.url, attrs: 'target="_blank" rel="noopener noreferrer me"', children: vk.cta })}
-    </aside>`;
   }
 
   function assetUrl(rel) {
@@ -177,11 +151,11 @@
     </picture>`;
   }
 
-  function heading({ eyebrow, title, lead, id, className = "" }) {
+  function heading({ eyebrow, title, lead, id, className = "", leadClass = "mt-5" }) {
     return `<header class="max-w-3xl ${className}">
       ${eyebrow ? `<p class="eyebrow mb-4">${esc(eyebrow)}</p>` : ""}
       <h2 id="${id}" class="display text-[clamp(24px,3.6vw,46px)] font-semibold text-ink">${esc(title)}</h2>
-      ${lead ? `<p class="mt-5 text-base leading-relaxed text-chrome md:text-lg">${esc(lead)}</p>` : ""}
+      ${lead ? `<p class="${leadClass} text-base leading-relaxed text-chrome md:text-lg">${esc(lead)}</p>` : ""}
     </header>`;
   }
 
@@ -270,19 +244,16 @@
         </picture>
       </div>
       <div class="hero-brand">
-        <p class="hero-kicker">${esc(site.brand.kicker)}</p>
-        ${site.brand.slogan ? `<p class="hero-slogan">${esc(site.brand.slogan)}</p>` : ""}
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
         <picture class="hero-logo-wrap">
           <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v9.webp")}">
           <img class="hero-logo" src="${esc(site.brand.logoHeroPng || "./brand/logo-flat-v9.png")}" alt="" width="806" height="562" decoding="sync" fetchpriority="high" aria-hidden="true">
         </picture>
+        <p class="hero-kicker">${esc(site.brand.kicker)}</p>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
-      <a href="#works" aria-label="Прокрутить к работам" class="absolute bottom-6 left-1/2 z-10 flex h-16 w-11 -translate-x-1/2 justify-center">
-        <span aria-hidden="true" class="relative block h-16 w-px overflow-hidden bg-white/25">
-          <span class="animate-scroll-glint absolute inset-x-0 top-0 block h-5 bg-gradient-to-b from-transparent via-white to-transparent"></span>
-        </span>
+      <a href="#works" data-smooth-scroll aria-label="Прокрутить к работам" class="hero-scroll-arrow absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
+        ${icon("chevron-down", "size-6")}
       </a>
     </section>`;
   }
@@ -310,7 +281,6 @@
             <ul class="m-0 flex list-none gap-1 p-0">${links}</ul>
           </nav>
           <div class="header-actions">
-            ${vkLink()}
             ${btn({ variant: "primary", href: "#request", className: "!min-h-11 !px-5 !text-[13px]", children: "Записаться" })}
             <button type="button" class="header-menu-btn lg:hidden" id="header-menu-btn" aria-expanded="false" aria-controls="header-nav-mobile" aria-label="Открыть меню">
               ${icon("menu", "size-5 header-menu-icon")}
@@ -329,35 +299,132 @@
     return value.toFixed(decimals);
   }
 
-  function renderAbout() {
-    const cards = site.stats
+  function renderAboutStatCards() {
+    return site.stats
       .map((stat) => {
         const suffix = stat.suffix ?? "";
         const parts = suffix.split("★");
-        return `<li class="glass rounded-2xl p-6 transition-[transform,border-color] duration-300 hover:-translate-y-0.5 hover:border-amber/35 md:p-7">
-          <p class="display text-[clamp(32px,4vw,48px)] font-semibold text-ink">
-            <span class="sr-only">${formatStat(stat.value, stat.decimals ?? 0)}${suffix}</span>
-            <span aria-hidden="true"><span data-stat="${esc(stat.key)}" data-value="${stat.value}" data-decimals="${stat.decimals ?? 0}">${formatStat(0, stat.decimals ?? 0)}</span>${esc(parts[0])}${
+        return `<li class="about-stat about-stat--compact about-stat--bar glass rounded-full px-4 py-2.5 transition-[transform,border-color,box-shadow] duration-300 hover:-translate-y-0.5 hover:border-amber/40 hover:shadow-[0_8px_28px_-12px_rgba(229,184,105,0.35)] sm:px-4 sm:py-3">
+          <div class="about-stat-bar flex w-full min-w-0 items-center justify-between gap-2">
+            <p class="display shrink-0 text-[clamp(17px,2vw,22px)] font-semibold leading-none text-ink">
+              <span class="sr-only">${formatStat(stat.value, stat.decimals ?? 0)}${suffix}</span>
+              <span aria-hidden="true"><span data-stat="${esc(stat.key)}" data-value="${stat.value}" data-decimals="${stat.decimals ?? 0}">${formatStat(0, stat.decimals ?? 0)}</span>${esc(parts[0])}${
           parts[1] !== undefined ? `<span class="text-amber">★${esc(parts[1])}</span>` : ""
         }</span>
-          </p>
-          <p class="mt-3 font-semibold text-ink">${esc(stat.label)}</p>
-          <p class="mt-2 text-[14px] leading-relaxed text-chrome md:text-[15px]">${esc(stat.description)}</p>
+            </p>
+            <p class="min-w-0 text-right text-[10px] font-semibold leading-snug text-chrome sm:text-[11px]">${esc(stat.label)}</p>
+          </div>
+          <p class="sr-only">${esc(stat.description)}</p>
         </li>`;
       })
       .join("");
-    return `<section id="about" aria-labelledby="about-title" class="section isolate">
-      ${backdrop("hex-ceiling", 0.85, "center top")}
-      <div class="container-x grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.1fr)] lg:items-center lg:gap-16">
-        <div class="min-w-0 max-w-xl">
-          <p class="eyebrow mb-4">${esc(site.about.eyebrow)}</p>
-          <h2 id="about-title" class="display text-[clamp(24px,3.4vw,44px)] font-semibold text-ink">${esc(site.about.title)}</h2>
-          <p class="mt-6 text-base leading-relaxed text-chrome md:text-lg">${esc(site.about.text)}</p>
+  }
+
+  function renderAboutMapBlock() {
+    const c = site.contacts;
+    const vk = site.social && site.social.vk;
+    const mapLabel = c.yandexOrgUrl.includes("yandex") ? "Открыть в Яндекс Картах" : "Открыть на карте";
+    const tel = c.phone.replace(/[^\d+]/g, "");
+    const overlay = isTouch() && !state.mapUnlocked
+      ? `<button type="button" data-unlock-map class="absolute inset-0 z-[1] flex items-end justify-center bg-transparent pb-5"><span class="glass rounded-full px-4 py-2 text-sm text-ink">Нажмите, чтобы двигать карту</span></button>`
+      : "";
+    return `<div class="about-intro-aside flex min-w-0 flex-col gap-4 sm:gap-5">
+      <div class="map-frame about-map about-map--intro relative min-h-[240px] w-full min-w-0 shrink-0 overflow-hidden rounded-2xl border border-white/10 bg-graphite sm:min-h-[300px] lg:min-h-[320px]">
+        <iframe src="${esc(c.yandexWidgetUrl)}" title="${esc(site.brand.name)} на картах" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen class="absolute inset-0 h-full w-full border-0"></iframe>
+        ${overlay}
+        <div class="glass pointer-events-none absolute left-4 top-4 z-[2] flex items-center gap-2 rounded-full px-4 py-2 text-sm text-ink">
+          <span class="size-2 rounded-full bg-amber" aria-hidden="true"></span>${esc(c.studioName)}
         </div>
-        <ul id="about-stats" class="m-0 grid list-none grid-cols-1 gap-4 p-0 sm:grid-cols-2">${cards}</ul>
+      </div>
+      <div class="about-map-meta text-[14px] leading-relaxed text-ink sm:text-[15px]" aria-label="${esc(site.sections.location.title)}">
+        <p class="about-map-meta-addr m-0 flex items-start gap-3">
+          ${icon("map-pin", "mt-0.5 size-5 shrink-0 text-amber")}
+          <span>${esc(c.address)}</span>
+        </p>
+        <p class="about-map-meta-line m-0 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span class="inline-flex items-center gap-2">
+            ${icon("clock", "size-5 shrink-0 text-amber")}
+            <span>${esc(c.schedule)}${esc(c.scheduleNote)}</span>
+          </span>
+          <span class="inline-flex items-center gap-2">
+            ${icon("phone", "size-5 shrink-0 text-amber")}
+            <a href="tel:${esc(tel)}" class="underline-offset-4 hover:text-amber hover:underline">${esc(c.phone)}</a>
+          </span>
+        </p>
+      </div>
+      <div class="about-map-actions flex flex-nowrap gap-2 sm:gap-2.5">
+        ${btn({ arrow: true, href: "#request", className: "about-map-btn", children: "Записаться" })}
+        ${btn({ variant: "glass", arrow: true, href: c.yandexOrgUrl, className: "about-map-btn", attrs: 'target="_blank" rel="noopener noreferrer"', children: mapLabel })}
+        ${
+          vk && vk.url
+            ? btn({
+                variant: "glass",
+                arrow: true,
+                href: vk.url,
+                className: "about-map-btn",
+                attrs: 'target="_blank" rel="noopener noreferrer me"',
+                children: "Открыть в ВКонтакте",
+              })
+            : ""
+        }
+      </div>
+    </div>`;
+  }
+
+  function renderAboutStudioAside() {
+    return `<aside id="about" class="faq-studio-aside min-w-0" aria-labelledby="about-title">
+      <div class="about-intro-copy min-w-0 max-w-xl lg:max-w-none">
+        <p class="eyebrow mb-4">О нас</p>
+        <h2 id="about-title" class="display text-[clamp(24px,3.6vw,46px)] font-semibold text-ink">${esc(site.about.brandTitle)}</h2>
+        <p class="mt-5 text-base leading-relaxed text-chrome md:mt-6 md:text-lg">${esc(site.about.text)}</p>
+      </div>
+      <ul id="about-stats" class="about-stats-grid m-0 grid w-full max-w-xl list-none grid-cols-2 gap-2.5 p-0 sm:gap-3 lg:max-w-none">${renderAboutStatCards()}</ul>
+      <div class="faq-studio-map-wrap min-w-0">${renderAboutMapBlock()}</div>
+    </aside>`;
+  }
+
+  function renderFaq() {
+    const items = site.faq || [];
+    if (!items.length) return "";
+    const list = items
+      .map(
+        (item) => `<li class="faq-item">
+          <details class="faq-details glass rounded-2xl">
+            <summary class="faq-summary flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4 text-left sm:px-6 sm:py-5">
+              <span class="text-base font-semibold text-ink sm:text-lg">${esc(item.question)}</span>
+              <span class="faq-chevron shrink-0 text-amber" aria-hidden="true">${icon("chevron-down", "size-5")}</span>
+            </summary>
+            <div class="faq-answer-reveal">
+              <div class="faq-answer border-t border-white/10 px-5 pb-5 pt-4 text-left text-base leading-relaxed text-chrome sm:px-6 sm:pb-6 md:text-lg">
+                <p class="m-0">${esc(item.answer)}</p>
+              </div>
+            </div>
+          </details>
+        </li>`
+      )
+      .join("");
+    const sect = site.sections.faq || {};
+    return `<section id="faq" aria-labelledby="faq-title" class="section isolate">
+      ${backdrop("hex-ceiling", 0.85, "center top")}
+      <div class="container-x">
+        <div class="faq-about-pair text-left">
+          <div class="faq-main min-w-0">
+            <div class="faq-intro">
+              ${heading({
+                ...sect,
+                id: "faq-title",
+                className: "w-full max-w-none",
+                leadClass: "mt-4 sm:mt-5",
+              })}
+            </div>
+            <ul class="faq-list m-0 min-w-0 list-none p-0">${list}</ul>
+          </div>
+          ${renderAboutStudioAside()}
+        </div>
       </div>
     </section>`;
   }
+
 
   function svcPrice(price) {
     return `<span class="svc-price ${price ? "" : "svc-price--none"}">${esc(price ?? "по запросу")}</span>`;
@@ -546,42 +613,6 @@
         <div class="mt-4 flex justify-center gap-3 md:hidden">
           ${btn({ variant: "icon", attrs: 'aria-label="Предыдущие отзывы" data-reviews-dir="-1"', children: icon("chevron-left", "size-5") })}
           ${btn({ variant: "icon", attrs: 'aria-label="Следующие отзывы" data-reviews-dir="1"', children: icon("chevron-right", "size-5") })}
-        </div>
-      </div>
-    </section>`;
-  }
-
-  function renderLocation() {
-    const c = site.contacts;
-    const mapLabel = c.yandexOrgUrl.includes("yandex") ? "Открыть в Яндекс Картах" : "Открыть на карте";
-    const tel = c.phone.replace(/[^\d+]/g, "");
-    const overlay = isTouch() && !state.mapUnlocked
-      ? `<button type="button" data-unlock-map class="absolute inset-0 z-[1] flex items-end justify-center bg-transparent pb-5"><span class="glass rounded-full px-4 py-2 text-sm text-ink">Нажмите, чтобы двигать карту</span></button>`
-      : "";
-    return `<section id="contacts" aria-labelledby="location-title" class="section">
-      <div class="container-x">
-        <div class="grid gap-10 lg:grid-cols-12 lg:items-center lg:gap-14">
-          <div class="lg:col-span-5">
-            <p class="eyebrow">${esc(site.sections.location.eyebrow)}</p>
-            <h2 id="location-title" class="display mt-4 text-[clamp(26px,4.2vw,48px)] font-semibold text-ink">${esc(site.sections.location.title)}</h2>
-            <div class="mt-8 flex flex-col gap-4">
-              <p class="flex items-start gap-3 text-ink">${icon("map-pin", "mt-0.5 size-5 shrink-0 text-amber")}<span>${esc(c.address)}<span class="block text-sm text-chrome">${esc(c.district)}</span></span></p>
-              <p class="flex items-start gap-3 text-ink">${icon("clock", "mt-0.5 size-5 shrink-0 text-amber")}<span>${esc(c.schedule)}${esc(c.scheduleNote)}</span></p>
-              <p class="flex items-start gap-3 text-ink">${icon("phone", "mt-0.5 size-5 shrink-0 text-amber")}<a href="tel:${esc(tel)}" class="underline-offset-4 hover:text-amber hover:underline">${esc(c.phone)}</a></p>
-            </div>
-            <div class="mt-8 flex flex-wrap gap-3">
-              ${btn({ variant: "glass", arrow: true, href: c.yandexOrgUrl, attrs: 'target="_blank" rel="noopener noreferrer"', children: mapLabel })}
-              ${btn({ arrow: true, href: "#request", children: "Записаться" })}
-            </div>
-            ${renderVkCard()}
-          </div>
-          <div class="map-frame relative min-h-[340px] overflow-hidden rounded-2xl border border-white/10 bg-graphite md:min-h-[460px] lg:col-span-7">
-            <iframe src="${esc(c.yandexWidgetUrl)}" title="${esc(site.brand.name)} на картах" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen class="absolute inset-0"></iframe>
-            ${overlay}
-            <div class="glass pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-full px-4 py-2 text-sm text-ink">
-              <span class="size-2 rounded-full bg-amber" aria-hidden="true"></span>${esc(c.studioName)}
-            </div>
-          </div>
         </div>
       </div>
     </section>`;
@@ -787,7 +818,6 @@
 
   function renderFooter() {
     const legal = site.legal || {};
-    const vk = site.social && site.social.vk;
     const year = new Date().getFullYear();
     const docs = [
       ["./legal/privacy.html", "Политика обработки персональных данных"],
@@ -808,7 +838,6 @@
               <span class="brand-name">${esc(site.brand.name)}</span>
             </a>
             <p class="footer-lead">Детейлинг в Нижнем Новгороде: тонировка, бронирование плёнкой, химчистка салона.</p>
-            ${vk ? `<div class="mt-5 flex flex-wrap items-center gap-3">${vkLink()}${btn({ variant: "glass", href: vk.url, attrs: 'target="_blank" rel="noopener noreferrer me"', children: "Мы ВКонтакте" })}</div>` : ""}
           </div>
           <div>
             <p class="footer-heading">Разделы</p>
@@ -862,13 +891,12 @@
             : ""
         }
         ${textStrip(site.strips.services, "amber")}
-        ${renderAbout()}
         ${site.services.length ? renderServices() : ""}
         ${renderBeforeAfter()}
         ${textStrip(site.strips.brand)}
         ${renderReviews()}
-        ${renderLocation()}
         ${renderRequest()}
+        ${renderFaq()}
       </main>
       ${renderFooter()}
       ${renderCookieBanner()}`;
@@ -916,6 +944,71 @@
       const key = row.getAttribute("data-toggle-item");
       row.setAttribute("aria-pressed", String(booking().isSelected(key)));
     });
+  }
+
+  function sectionScrollOffset(el) {
+    const margin = parseFloat(getComputedStyle(el).scrollMarginTop);
+    if (Number.isFinite(margin) && margin > 0) return margin;
+    const pad = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop);
+    return Number.isFinite(pad) ? pad : 0;
+  }
+
+  function headerScrollInset() {
+    const root = document.documentElement;
+    const header = parseFloat(getComputedStyle(root).getPropertyValue("--header-offset"));
+    if (Number.isFinite(header) && header > 0) return header;
+    const bar = document.getElementById("site-header");
+    return bar ? Math.ceil(bar.getBoundingClientRect().height) : 0;
+  }
+
+  function sectionTitleScrollGap() {
+    const root = document.documentElement;
+    const style = getComputedStyle(root);
+    const gap =
+      parseFloat(style.getPropertyValue("--section-title-scroll-gap")) ||
+      parseFloat(style.getPropertyValue("--works-title-scroll-gap"));
+    return Number.isFinite(gap) ? gap : 16;
+  }
+
+  function sectionTitleAnchor(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (!section) return null;
+    const labelled = section.getAttribute("aria-labelledby");
+    if (labelled) {
+      const titleEl = document.getElementById(labelled);
+      if (titleEl) {
+        return (
+          titleEl.closest("header") ||
+          titleEl.closest(".faq-intro") ||
+          titleEl.closest(".about-intro-copy") ||
+          titleEl.parentElement
+        );
+      }
+    }
+    return (
+      section.querySelector("header") ||
+      section.querySelector(".faq-intro") ||
+      section.querySelector(".about-intro-copy") ||
+      section.querySelector(".container-x > header")
+    );
+  }
+
+  function scrollToSectionById(id, { updateHash = true, forceSmooth = false } = {}) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    let top;
+    if (id === "hero") {
+      top = 0;
+    } else {
+      const head = sectionTitleAnchor(id);
+      if (head) {
+        top = head.getBoundingClientRect().top + window.scrollY - headerScrollInset() - sectionTitleScrollGap();
+      } else {
+        top = el.getBoundingClientRect().top + window.scrollY - sectionScrollOffset(el);
+      }
+    }
+    window.scrollTo({ top: Math.max(0, top), behavior: forceSmooth || !reducedMotion() ? "smooth" : "auto" });
+    if (updateHash) history.pushState(null, "", `#${id}`);
   }
 
   function goToForm() {
@@ -1074,7 +1167,7 @@
       io.observe(worksSection);
     }
 
-    const duration = 40000;
+    const WORKS_CYCLE_MS = 18000;
 
     rows.forEach((row) => {
       const track = row.querySelector(".works-marquee-track");
@@ -1082,25 +1175,38 @@
 
       const dir = row.getAttribute("data-works-dir") === "backward" ? -1 : 1;
       if (dir < 0 && track.scrollWidth > 0) row.scrollLeft = track.scrollWidth / 2;
+
       let paused = false;
       let grabbing = false;
       let drag = null;
-      let raf = 0;
+      let scrollPos = row.scrollLeft;
       let lastTs = 0;
+      let raf = 0;
 
       const setPaused = (value) => {
         paused = value;
       };
 
+      const syncScrollPos = () => {
+        scrollPos = row.scrollLeft;
+      };
+
       const tick = (ts) => {
-        if (!lastTs) lastTs = ts;
-        const dt = ts - lastTs;
-        lastTs = ts;
         const half = track.scrollWidth / 2;
-        if (half > 0 && sectionVisible && !paused && !grabbing && !reducedMotion()) {
-          row.scrollLeft += (dir * (half / duration) * dt);
-          wrapWorksScroll(row, track);
+        const active = half > 0 && sectionVisible && !paused && !grabbing && !reducedMotion();
+        if (!active) {
+          lastTs = 0;
+          syncScrollPos();
+          raf = requestAnimationFrame(tick);
+          return;
         }
+        if (!lastTs) lastTs = ts;
+        const dt = Math.min(ts - lastTs, 50);
+        lastTs = ts;
+        scrollPos += dir * (half / WORKS_CYCLE_MS) * dt;
+        if (scrollPos >= half) scrollPos -= half;
+        else if (scrollPos < 0) scrollPos += half;
+        row.scrollLeft = scrollPos;
         raf = requestAnimationFrame(tick);
       };
       raf = requestAnimationFrame(tick);
@@ -1110,23 +1216,12 @@
         if (!grabbing) setPaused(false);
       });
 
-      row.addEventListener(
-        "wheel",
-        (event) => {
-          const delta = Math.abs(event.deltaX) > Math.abs(event.deltaY) ? event.deltaX : event.deltaY;
-          if (!delta) return;
-          row.scrollLeft += delta;
-          wrapWorksScroll(row, track);
-          event.preventDefault();
-        },
-        { passive: false }
-      );
-
       row.addEventListener("keydown", (event) => {
         if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
         const step = 320;
         row.scrollLeft += event.key === "ArrowLeft" ? -step : step;
         wrapWorksScroll(row, track);
+        syncScrollPos();
         event.preventDefault();
       });
 
@@ -1152,10 +1247,16 @@
         if (!drag || drag.id !== event.pointerId) return;
         row.scrollLeft = drag.scroll - (event.clientX - drag.x);
         wrapWorksScroll(row, track);
+        syncScrollPos();
       });
 
-      row.addEventListener("pointerup", endDrag);
-      row.addEventListener("pointercancel", endDrag);
+      const endDragAndSync = (event) => {
+        endDrag(event);
+        syncScrollPos();
+      };
+
+      row.addEventListener("pointerup", endDragAndSync);
+      row.addEventListener("pointercancel", endDragAndSync);
     });
   }
 
@@ -1308,6 +1409,30 @@
 
   function bindGlobal() {
     document.addEventListener("click", (event) => {
+      const anchor = event.target.closest('a[href^="#"]');
+      if (anchor) {
+        const raw = anchor.getAttribute("href");
+        if (raw && raw.length > 1) {
+          const url = new URL(anchor.href, window.location.href);
+          const normPath = (path) => path.replace(/\/index\.html$/i, "/").replace(/\/$/, "") || "/";
+          if (url.origin === window.location.origin && normPath(url.pathname) === normPath(window.location.pathname)) {
+            const id = decodeURIComponent(raw.slice(1));
+            if (document.getElementById(id)) {
+              event.preventDefault();
+              scrollToSectionById(id, { forceSmooth: anchor.hasAttribute("data-smooth-scroll") });
+              const mobileNav = document.getElementById("header-nav-mobile");
+              const menuBtn = document.getElementById("header-menu-btn");
+              if (mobileNav && !mobileNav.hidden) {
+                mobileNav.hidden = true;
+                menuBtn?.setAttribute("aria-expanded", "false");
+                menuBtn?.setAttribute("aria-label", "Открыть меню");
+                document.getElementById("site-header")?.classList.remove("is-menu-open");
+              }
+              return;
+            }
+          }
+        }
+      }
       const toggleService = event.target.closest("[data-toggle-service]");
       if (toggleService) {
         const key = toggleService.getAttribute("data-toggle-service");
@@ -1390,6 +1515,12 @@
 
   applyTheme();
   renderPage();
+  if (location.hash.length > 1) {
+    const id = decodeURIComponent(location.hash.slice(1));
+    if (document.getElementById(id)) {
+      requestAnimationFrame(() => scrollToSectionById(id, { updateHash: false }));
+    }
+  }
   bindHeader();
   bindStats();
   bindServices();
