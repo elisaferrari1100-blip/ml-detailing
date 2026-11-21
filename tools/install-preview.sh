@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Один раз на Маке: автосинк превью раз в минуту + постоянный локальный сервер на :8095.
+# Один раз на Маке: автосинк превью каждые 10 секунд + постоянный локальный сервер на :8095.
 set -euo pipefail
 SRC="$(cd "$(dirname "$0")" && pwd)/sync-preview.sh"
 mkdir -p "$HOME/.ml-detailing" "$HOME/Library/LaunchAgents"
@@ -12,7 +12,7 @@ cat > "$LA/ru.mldetailing.preview-sync.plist" <<PL
 <plist version="1.0"><dict>
   <key>Label</key><string>ru.mldetailing.preview-sync</string>
   <key>ProgramArguments</key><array><string>/bin/bash</string><string>$HOME/.ml-detailing/sync-preview.sh</string></array>
-  <key>StartInterval</key><integer>60</integer>
+  <key>StartInterval</key><integer>10</integer>
   <key>RunAtLoad</key><true/>
   <key>StandardErrorPath</key><string>$HOME/.ml-detailing/preview-sync.err</string>
 </dict></plist>
@@ -33,4 +33,4 @@ for n in preview-sync preview-server; do
   launchctl bootout "gui/$(id -u)/ru.mldetailing.$n" 2>/dev/null || true
   launchctl bootstrap "gui/$(id -u)" "$LA/ru.mldetailing.$n.plist"
 done
-echo "Превью: http://127.0.0.1:8095/  (обновляется само раз в минуту)"
+echo "Превью: http://127.0.0.1:8095/  (обновляется само каждые 10 секунд)"

@@ -32,6 +32,8 @@ fi
 # 3. Пуш (обычный, без --force: история и ветки сохраняются)
 git push -q -u "$REMOTE" "$BRANCH"
 [ "$PUSH_ALL" = 1 ] && git push -q "$REMOTE" --all
+# Сразу обновить локальное превью (http://127.0.0.1:8095/)
+[ -x "$HOME/.ml-detailing/sync-preview.sh" ] && "$HOME/.ml-detailing/sync-preview.sh" --force >/dev/null 2>&1 && echo "Превью: обновлено"
 SHA=$(git rev-parse HEAD)
 echo "Push: OK ($BRANCH @ ${SHA:0:7})"
 
