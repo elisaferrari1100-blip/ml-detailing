@@ -19,6 +19,20 @@ VPS нет, ключей и секретов для деплоя не нужно
 3. Запусти `tools/deploy.sh "краткое описание"` на `main`.
 4. В выводе должны быть строки `Push: OK`, `Pages: OK` и `Done: https://elisaferrari1100-blip.github.io/ml-detailing/`.
 
+### Agent mode: отчёт в самом конце ответа
+В режиме agent mode после каждой отработки в самом конце ответа обязательно выведи ровно этот блок, заполненный реальными результатами:
+
+```
+Сборка: ✅ успешно
+Деплой на elisaferrari1100-blip.github.io/ml-detailing: ✅ успешно
+Слияние в main: ✅ <ссылка на PR или merge-коммит на GitHub>
+```
+
+- В строке «Слияние в main» дай реальную ссылку: на PR (`https://github.com/elisaferrari1100-blip/ml-detailing/pull/<номер>`) или на merge-коммит (`https://github.com/elisaferrari1100-blip/ml-detailing/commit/<sha>`).
+- Если шаг не удался, вместо «✅ …» поставь «❌» и коротко причину, например: `Деплой на elisaferrari1100-blip.github.io/ml-detailing: ❌ нет строки Pages: OK`.
+- Ставь ✅ только по факту: сборка и деплой успешны, только если в выводе `tools/deploy.sh` есть `Push: OK`, `Pages: OK` и `Done: ...`.
+- В других режимах этот блок не выводится.
+
 ### Любой другой режим (вопросы, планы и т.п.): деплой и пуш запрещены
 В режиме вопросов, планирования и любом режиме, кроме agent mode, запрещено:
 `git push`, merge в `main`, запуск `tools/deploy.sh` и любые другие действия, меняющие GitHub.
