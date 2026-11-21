@@ -252,10 +252,8 @@
         <p class="hero-kicker">${esc(site.brand.kicker)}</p>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
-      <a href="#works" aria-label="Прокрутить к работам" class="absolute bottom-6 left-1/2 z-10 flex h-16 w-11 -translate-x-1/2 justify-center">
-        <span aria-hidden="true" class="relative block h-16 w-px overflow-hidden bg-white/25">
-          <span class="animate-scroll-glint absolute inset-x-0 top-0 block h-5 bg-gradient-to-b from-transparent via-white to-transparent"></span>
-        </span>
+      <a href="#works" data-smooth-scroll aria-label="Прокрутить к работам" class="hero-scroll-arrow absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
+        ${icon("chevron-down", "size-6")}
       </a>
     </section>`;
   }
@@ -995,7 +993,7 @@
     );
   }
 
-  function scrollToSectionById(id, { updateHash = true } = {}) {
+  function scrollToSectionById(id, { updateHash = true, forceSmooth = false } = {}) {
     const el = document.getElementById(id);
     if (!el) return;
     let top;
@@ -1009,7 +1007,7 @@
         top = el.getBoundingClientRect().top + window.scrollY - sectionScrollOffset(el);
       }
     }
-    window.scrollTo({ top: Math.max(0, top), behavior: reducedMotion() ? "auto" : "smooth" });
+    window.scrollTo({ top: Math.max(0, top), behavior: forceSmooth || !reducedMotion() ? "smooth" : "auto" });
     if (updateHash) history.pushState(null, "", `#${id}`);
   }
 
@@ -1421,7 +1419,7 @@
             const id = decodeURIComponent(raw.slice(1));
             if (document.getElementById(id)) {
               event.preventDefault();
-              scrollToSectionById(id);
+              scrollToSectionById(id, { forceSmooth: anchor.hasAttribute("data-smooth-scroll") });
               const mobileNav = document.getElementById("header-nav-mobile");
               const menuBtn = document.getElementById("header-menu-btn");
               if (mobileNav && !mobileNav.hidden) {

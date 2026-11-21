@@ -770,3 +770,36 @@ html {
     max-height: calc(38svh);
   }
 }
+
+
+/* Стрелка вниз на первом экране */
+.hero-scroll-arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  color: #fafafa;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  transition: background 0.25s ease, border-color 0.25s ease, color 0.25s ease;
+}
+.hero-scroll-arrow:hover,
+.hero-scroll-arrow:focus-visible {
+  color: #e5b869;
+  border-color: rgba(229, 184, 105, 0.6);
+  background: rgba(229, 184, 105, 0.12);
+}
+.hero-scroll-arrow svg {
+  animation: hero-arrow-bob 1.8s ease-in-out infinite;
+}
+@keyframes hero-arrow-bob {
+  0%, 100% { transform: translateY(-2px); }
+  50% { transform: translateY(4px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-scroll-arrow svg { animation: none; }
+}
