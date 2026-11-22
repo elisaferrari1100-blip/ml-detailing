@@ -124,7 +124,7 @@ window.ML_SITE = {
   sections: {
     works: {
       eyebrow: "Наши работы",
-      title: "Поток работ",
+      title: "Наши работы",
       lead: "Автомобили клиентов студии — фото с Яндекс Карт.",
     },
     services: {
@@ -191,18 +191,29 @@ window.ML_SITE = {
     },
   ],
   worksRow1: [
+    { key: "work-10", badge: "Zeekr 007", src: "./images/works/work-10.webp", srcSmall: "./images/works/work-10-800.webp", alt: "Zeekr 007 — ML", width: 1016, height: 1016 },
+    { key: "work-11", badge: "Porsche Panamera GTS", src: "./images/works/work-11.webp", srcSmall: "./images/works/work-11-800.webp", alt: "Porsche Panamera GTS — ML", width: 1086, height: 1086 },
+    { key: "work-12", badge: "Honda CR-V", src: "./images/works/work-12.webp", srcSmall: "./images/works/work-12-800.webp", alt: "Honda CR-V — ML", width: 918, height: 918 },
+    { key: "work-13", badge: "Kia Ceed", src: "./images/works/work-13.webp", srcSmall: "./images/works/work-13-800.webp", alt: "Kia Ceed — ML", width: 1086, height: 1086 },
+    { key: "work-14", badge: "Changan UNI-T", src: "./images/works/work-14.webp", srcSmall: "./images/works/work-14-800.webp", alt: "Changan UNI-T — ML", width: 1086, height: 1086 },
+    { key: "work-15", badge: "Porsche Panamera GTS", src: "./images/works/work-15.webp", srcSmall: "./images/works/work-15-800.webp", alt: "Porsche Panamera GTS — ML", width: 1086, height: 1086 },
+  ],
+  worksRow2: [
+    { key: "work-16", badge: "Mercedes-Benz ML", src: "./images/works/work-16.webp", srcSmall: "./images/works/work-16-800.webp", alt: "Mercedes-Benz ML — ML", width: 1086, height: 1086 },
+    { key: "work-17", badge: "Mitsubishi Lancer, Mercedes-Benz S-Class", src: "./images/works/work-17.webp", srcSmall: "./images/works/work-17-800.webp", alt: "Mitsubishi Lancer и Mercedes-Benz S-Class — ML", width: 998, height: 998 },
+    { key: "work-18", badge: "Porsche Cayenne", src: "./images/works/work-18.webp", srcSmall: "./images/works/work-18-800.webp", alt: "Porsche Cayenne — ML", width: 1086, height: 1086 },
+    { key: "work-19", badge: "Mercedes-Benz CLS", src: "./images/works/work-19.webp", srcSmall: "./images/works/work-19-800.webp", alt: "Mercedes-Benz CLS — ML", width: 1086, height: 1086 },
+    { key: "work-20", badge: "Zeekr 007", src: "./images/works/work-20.webp", srcSmall: "./images/works/work-20-800.webp", alt: "Zeekr 007 — ML", width: 1016, height: 1016 },
     { key: "work-00", badge: "Porsche Panamera", src: "./images/works/work-00.webp", srcSmall: "./images/works/work-00-800.webp", alt: "Porsche Panamera — ML", width: 1280, height: 800 },
     { key: "work-01", badge: "Mercedes-Benz G-Class", src: "./images/works/work-01.webp", srcSmall: "./images/works/work-01-800.webp", alt: "Mercedes-Benz G-Class — ML", width: 1280, height: 800 },
     { key: "work-02", badge: "Mercedes-Benz CLS", src: "./images/works/work-02.webp", srcSmall: "./images/works/work-02-800.webp", alt: "Mercedes-Benz CLS — ML", width: 1280, height: 800 },
-    { key: "work-03", badge: "Работа студии", src: "./images/works/work-03.webp", srcSmall: "./images/works/work-03-800.webp", alt: "Работа студии — ML", width: 1280, height: 800 },
-    { key: "work-04", badge: "Работа студии", src: "./images/works/work-04.webp", srcSmall: "./images/works/work-04-800.webp", alt: "Работа студии — ML", width: 1280, height: 800 },
-  ],
-  worksRow2: [
+    { key: "work-03", badge: "BMW 3 Series", src: "./images/works/work-03.webp", srcSmall: "./images/works/work-03-800.webp", alt: "BMW 3 Series — ML", width: 1280, height: 800 },
+    { key: "work-04", badge: "BMW 6 Series", src: "./images/works/work-04.webp", srcSmall: "./images/works/work-04-800.webp", alt: "BMW 6 Series — ML", width: 1280, height: 800 },
     { key: "work-05", badge: "Mercedes-Benz S-Class", src: "./images/works/work-05.webp", srcSmall: "./images/works/work-05-800.webp", alt: "Mercedes-Benz S-Class — ML", width: 1280, height: 800 },
     { key: "work-06", badge: "Porsche Cayenne", src: "./images/works/work-06.webp", srcSmall: "./images/works/work-06-800.webp", alt: "Porsche Cayenne — ML", width: 912, height: 570 },
-    { key: "work-07", badge: "Работа студии", src: "./images/works/work-07.webp", srcSmall: "./images/works/work-07-800.webp", alt: "Работа студии — ML", width: 1280, height: 800 },
-    { key: "work-08", badge: "Работа студии", src: "./images/works/work-08.webp", srcSmall: "./images/works/work-08-800.webp", alt: "Работа студии — ML", width: 960, height: 600 },
-    { key: "work-09", badge: "Работа студии", src: "./images/works/work-09.webp", srcSmall: "./images/works/work-09-800.webp", alt: "Работа студии — ML", width: 961, height: 601 },
+    { key: "work-07", badge: "Lada Priora", src: "./images/works/work-07.webp", srcSmall: "./images/works/work-07-800.webp", alt: "Lada Priora — ML", width: 1280, height: 800 },
+    { key: "work-08", badge: "Kia Picanto", src: "./images/works/work-08.webp", srcSmall: "./images/works/work-08-800.webp", alt: "Kia Picanto — ML", width: 960, height: 600 },
+    { key: "work-09", badge: "Changan UNI-K", src: "./images/works/work-09.webp", srcSmall: "./images/works/work-09-800.webp", alt: "Changan UNI-K — ML", width: 961, height: 601 },
   ],
   services: [
     {
