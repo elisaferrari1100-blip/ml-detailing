@@ -452,7 +452,7 @@ window.ML_SITE = {
   },
 
   async submitLead(payload) {
-    const endpoint = (site.leads?.endpoint || "").trim();
+    const endpoint = (this.leads?.endpoint || "").trim();
     if (endpoint) {
       const res = await fetch(endpoint, {
         method: "POST",
