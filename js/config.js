@@ -151,9 +151,9 @@ window.ML_SITE = {
       lead: "Отметьте услуги — сразу увидите ориентир по цене. Точную стоимость назовут после осмотра.",
       standard: {
         title: "Как считается цена",
-        text: "Цены — ориентир по прайсу студии на Яндекс Картах. Точная стоимость зависит от автомобиля.",
+        text: "В прайсе все суммы указаны «от». Итог зависит от автомобиля и его состояния — точную стоимость назовём после осмотра.",
       },
-      totalNote: "ориентир по прайсу студии",
+      totalNote: "сумма «от» по выбранным позициям",
     },
   },
   about: {
@@ -259,7 +259,8 @@ window.ML_SITE = {
       key: "sound",
       title: "Шумоизоляция",
       description: "Дополнительная шумоизоляция салона и дверей: меньше шума с дороги и мотора. Объём работ зависит от автомобиля.",
-      price: "от 2\u00a0500\u00a0₽",
+      priceItem: "sound-doors",
+      price: "от 10\u00a0000\u00a0₽",
       image: {
         src: "./images/works/work-14.webp",
         srcSmall: "./images/works/work-14-800.webp",
@@ -272,6 +273,7 @@ window.ML_SITE = {
       key: "polish",
       title: "Полировка автомобиля",
       description: "Полировка кузова: убираем мелкие царапины и следы ухода, выравниваем блеск лака. Глубину работы оцениваем на осмотре.",
+      priceItem: "polish-body",
       price: "от 10\u00a0000\u00a0₽",
       image: {
         src: "./images/works/work-02.webp",
@@ -405,39 +407,65 @@ window.ML_SITE = {
     yandexWidgetUrl: "https://yandex.ru/map-widget/v1/?ll=43.885406%2C56.3449&z=16&oid=13418438493&ol=biz",
     phone: "+7 (999) 120-44-88",
   },
+  priceGroupOrder: [
+    "Тонировка",
+    "Мойка",
+    "Стёкла",
+    "Броня",
+    "Химчистка",
+    "Другое",
+    "Шумоизоляция",
+  ],
   priceList: [
-    { key: "tint-2", group: "Тонировка", title: "Тонировка переднего полукруга автомобиля", note: "Тонировка переднего полукруга автомобиля — это затемнение лобового и передних боковых стёкол, которое решает сразу несколько задач: снижает нагрев салона в жару, защищает глаза водителя от яркого солнца или от лишних глаз.", price: 5000 },
-    { key: "tint-3", group: "Тонировка", title: "Тонировка боковых стекол", note: "Тонировка боковых стекол", price: 2500 },
-    { key: "tint-4", group: "Тонировка", title: "Тонировка заднего полукруга автомобиля", note: "Тонировка заднего полукруга для комфорта и защиты от солнца. Подбираем плёнку под ваш автомобиль, аккуратно работаем с обогревом.", price: 5000 },
-    { key: "wash-0", group: "Мойка", title: "Детейлинг мойка подкапотного пространства с консервацией", note: "Детейлинг мойка подкапотного пространства с консервацией от 3.500₽, стоимость зависит от степени загрязнения и класса автомобиля.", price: 3500 },
-    { key: "wash-1", group: "Мойка", title: "Детейлинг Мойка", note: "Уход за кузовом и салоном автомобиля", price: 500 },
-    { key: "glass-5", group: "Стёкла", title: "Чистка водного камня", price: 500 },
-    { key: "glass-6", group: "Стёкла", title: "Антидождь", note: "Антидождь от 1.500₽", price: 1500 },
-    { key: "ppf-x0", group: "Бронирование плёнкой", title: "Бронирование кузова целиком" },
-    { key: "ppf-x1", group: "Бронирование плёнкой", title: "Бронирование зон риска" },
-    { key: "ppf-x2", group: "Бронирование плёнкой", title: "Бронирование фар" },
-    { key: "interior-x0", group: "Химчистка салона", title: "Полная химчистка салона" },
-    { key: "interior-x1", group: "Химчистка салона", title: "Химчистка сидений" },
-    { key: "styling-x0", group: "Антихром", title: "Антихром" },
-    { key: "optics-x0", group: "Полировка и защита фар", title: "Полировка фар" },
-    { key: "optics-x1", group: "Полировка и защита фар", title: "Защита фар плёнкой" },
+    { key: "tint-front", group: "Тонировка", title: "Передний полукруг", price: 5000 },
+    { key: "tint-3", group: "Тонировка", title: "Боковые стёкла", price: 2700 },
+    { key: "tint-wind", group: "Тонировка", title: "Лобовое стекло", price: 3000 },
+    { key: "wash-tech", group: "Мойка", title: "Техническая мойка", price: 500 },
+    { key: "wash-std", group: "Мойка", title: "Стандарт", price: 1000 },
+    { key: "wash-complex", group: "Мойка", title: "Комплекс", price: 1500 },
+    { key: "wash-detail", group: "Мойка", title: "Детейлинг-мойка", price: 2300 },
+    { key: "glass-5", group: "Стёкла", title: "Чистка от водного камня", price: 1000 },
+    { key: "glass-6", group: "Стёкла", title: "Антидождь", price: 3500 },
+    { key: "ppf-roof", group: "Броня", title: "Оклейка крыши в чёрный", price: 15000 },
+    { key: "ppf-lights", group: "Броня", title: "Фары", price: 5000 },
+    { key: "ppf-x1", group: "Броня", title: "Зоны риска", price: 25000 },
+    { key: "ppf-x0", group: "Броня", title: "Полная оклейка", price: 130000 },
+    { key: "interior-x0", group: "Химчистка", title: "Лёгкая химчистка", price: 5000 },
+    { key: "interior-x1", group: "Химчистка", title: "Химчистка сидений", price: 2000 },
+    { key: "interior-full", group: "Химчистка", title: "Полная с разбором", price: 10000 },
+    { key: "styling-x0", group: "Другое", title: "Антихром", price: 2000 },
+    { key: "optics-x0", group: "Другое", title: "Полировка фар", price: 2500 },
+    { key: "polish-body", group: "Другое", title: "Полировка кузова", price: 10000 },
+    { key: "sound-doors", group: "Шумоизоляция", title: "4 двери", price: 10000 },
+    { key: "sound-roof", group: "Шумоизоляция", title: "Крыша", price: 10000 },
+    { key: "sound-floor", group: "Шумоизоляция", title: "Пол", price: 20000 },
+    { key: "sound-full", group: "Шумоизоляция", title: "Полная шумоизоляция", price: 65000 },
   ],
 
   /**
-   * Единственная точка подключения отправки заявок.
-   * Сейчас демонстрационный режим: только пауза, без сети.
-   * Чтобы включить отправку, замените тело функции, например:
-   *
-   *   return fetch("/api/leads", {
-   *     method: "POST",
-   *     headers: { "Content-Type": "application/json" },
-   *     body: JSON.stringify(payload),
-   *   }).then((r) => { if (!r.ok) throw new Error("Ошибка отправки"); });
-   *
+   * Отправка заявок. Укажите `endpoint` (URL обработчика), чтобы включить POST в сеть.
+   * Пустая строка — заявка обрабатывается только на странице (без запроса на сервер).
    * payload: { name, phone, car, items, total, hasOnRequest }
    */
+  leads: {
+    endpoint: "",
+  },
+
   async submitLead(payload) {
-    await new Promise((resolve) => setTimeout(resolve, 700));
-    console.info("ML_SITE demo lead (не отправлено):", payload);
+    const endpoint = (site.leads?.endpoint || "").trim();
+    if (endpoint) {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) {
+        const detail = await res.text().catch(() => "");
+        throw new Error(detail || `Ошибка отправки (${res.status})`);
+      }
+      return { sent: true };
+    }
+    await new Promise((resolve) => setTimeout(resolve, 500));
+    return { sent: false };
   },
 };
