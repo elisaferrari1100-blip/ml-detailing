@@ -245,6 +245,7 @@
     const heroLetters = letters
       .map((ch) => `<span class="hero-brand-letter">${esc(ch)}</span>`)
       .join("");
+    const wordmark = site.brand.heroWordmark || "DETAILING";
     const hasCarLayer = Boolean(n.car && w.car);
     const wideBg = `(min-width: 2000px), (min-width: 1300px) and (min-resolution: 1.5dppx)`;
     const carLayer = hasCarLayer
@@ -266,7 +267,11 @@
       </div>
       <div class="hero-brand">
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
-        <div class="hero-lockup brand-lockup hero-brand-lockup" aria-hidden="true">${heroLetters}</div>
+        <div class="hero-lockup" aria-hidden="true">
+          <div class="hero-brand-lockup brand-lockup">${heroLetters}</div>
+          <p class="hero-wordmark">${esc(wordmark)}</p>
+        </div>
+        <p class="hero-kicker">${esc(site.brand.kicker)}</p>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
       <a href="#works" data-smooth-scroll aria-label="Прокрутить к работам" class="hero-scroll-arrow absolute bottom-6 left-1/2 z-10 -translate-x-1/2">

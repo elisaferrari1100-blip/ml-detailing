@@ -731,15 +731,21 @@ html {
   text-align: center;
   box-sizing: border-box;
 }
+.hero-lockup {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: clamp(6px, 1.2vw, 12px);
+  margin: 0 auto;
+  animation: fade-up 1s var(--ease-out-soft) 0.15s both;
+  pointer-events: none;
+}
 .hero-brand-lockup {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: clamp(10px, 2.2vw, 22px);
-  margin: 0 auto;
   text-decoration: none;
-  animation: fade-up 1s var(--ease-out-soft) 0.15s both;
-  pointer-events: none;
 }
 .hero-brand-letter {
   font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
@@ -751,6 +757,36 @@ html {
   text-shadow:
     0 2px 20px rgba(0, 0, 0, 0.75),
     0 0 36px rgba(0, 0, 0, 0.45);
+}
+.hero-wordmark {
+  margin: 0;
+  padding: 0 8px;
+  font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(14px, 3.6vw, 38px);
+  font-weight: 600;
+  letter-spacing: 0.42em;
+  text-indent: 0.42em;
+  line-height: 1.15;
+  color: #f5f5f5;
+  text-shadow:
+    0 2px 18px rgba(0, 0, 0, 0.75),
+    0 0 32px rgba(0, 0, 0, 0.45);
+  white-space: nowrap;
+}
+.hero-brand .hero-kicker {
+  max-width: none;
+  margin: clamp(14px, 2.2vw, 22px) auto 0;
+  padding: 0 12px;
+  font-size: clamp(12px, 2.1vw, 26px);
+  font-weight: 600;
+  letter-spacing: clamp(0.08em, 1.6vw, 0.28em);
+  line-height: 1.35;
+  white-space: nowrap;
+  user-select: text;
+  -webkit-user-select: text;
+  cursor: text;
+  color: #e8e8e8;
+  text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
 }
 #hero .hero-fade {
   opacity: 0.92;
@@ -765,6 +801,11 @@ html {
   }
   .hero-brand-lockup {
     gap: clamp(8px, 4vw, 14px);
+  }
+  .hero-wordmark {
+    font-size: clamp(13px, 4.8vw, 22px);
+    letter-spacing: 0.32em;
+    text-indent: 0.32em;
   }
 }
 

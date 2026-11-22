@@ -20,6 +20,7 @@ window.ML_SITE = {
     short: "ML",
     heroWords: ["ML"],
     nameLetters: ["M", "L"],
+    heroWordmark: "DETAILING",
     kicker: "Детейлинг · Нижний Новгород",
     city: "Нижний Новгород",
     logoMark: "./brand/logo-flat-v9-mark.webp",
