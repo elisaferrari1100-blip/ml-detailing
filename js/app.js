@@ -125,9 +125,9 @@
     return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   }
 
-  function isTouch() {
-    return window.matchMedia("(hover: none), (pointer: coarse)").matches;
-  }
+  function isTouch() { return false; }
+  function isTouch() { return false; }
+  function isTouch() { return false; }
 
   function isSplit() {
     return window.matchMedia("(min-width: 900px)").matches && !isTouch();
@@ -543,25 +543,32 @@
     </li>`;
   }
 
+  function activeServiceIndex() {
+    if (state.serviceHover != null) return state.serviceHover;
+    const openIdx = site.services.findIndex((s) => s.key === state.serviceOpenDesktop);
+    return openIdx >= 0 ? openIdx : 0;
+  }
+
+  function servicesFootHtml() {
+    const b = booking();
+    const split = isSplit();
+    return b.items.length > 0
+      ? `<p class="text-sm text-chrome">Услуги добавлены в заявку</p>${btn({ variant: "primary", arrow: true, attrs: "data-go-form", children: "Перейти к заявке" })}`
+      : `<p class="text-sm text-chrome">${esc(split ? site.sections.services.hintDesktop : site.sections.services.hintTouch)}</p>${btn({ variant: "glass", href: "#request", children: "Смотреть цены" })}`;
+  }
+
   function renderServices() {
     const split = isSplit();
-    const b = booking();
-    const hover = state.serviceHover;
-    const openIdx = site.services.findIndex((s) => s.key === state.serviceOpenDesktop);
-    const activeIdx = hover ?? (openIdx >= 0 ? openIdx : 0);
-    const active = site.services[activeIdx] || site.services[0];
+    const active = site.services[activeServiceIndex()] || site.services[0];
     const list = split
       ? site.services.map((s, i) => renderServiceDesktop(s, i)).join("")
       : site.services.map((s) => renderServiceTouch(s)).join("");
-    const foot =
-      b.items.length > 0
-        ? `<p class="text-sm text-chrome">Услуги добавлены в заявку</p>${btn({ variant: "primary", arrow: true, attrs: 'data-go-form', children: "Перейти к заявке" })}`
-        : `<p class="text-sm text-chrome">${esc(split ? site.sections.services.hintDesktop : site.sections.services.hintTouch)}</p>${btn({ variant: "glass", href: "#request", children: "Смотреть цены" })}`;
+    const foot = servicesFootHtml();
     const comparePair = site.beforeAfter[0];
     const frame =
       split && comparePair
         ? `<div class="svc-frame svc-frame--compare">
-            ${renderBaCompare(comparePair, { cardClass: "ba-card svc-ba-card" })}
+            ${renderBaCompare(comparePair, { cardClass: "ba-card svc-ba-card", eager: true })}
             <div class="svc-caption glass">
               <span class="svc-caption-title display">${esc(active.title)}</span>
               ${active.price ? `<span class="svc-caption-price">${esc(active.price)}</span>` : ""}
@@ -587,13 +594,16 @@
     return Math.min(100, Math.max(0, v));
   }
 
-  function renderBaCompare(pair, { cardClass = "ba-card" } = {}) {
+  function renderBaCompare(pair, { cardClass = "ba-card", eager = false } = {}) {
     const touch = isTouch();
     const start = touch ? 50 : 0;
+    const load = eager
+      ? 'loading="eager" fetchpriority="high" decoding="sync"'
+      : 'loading="lazy" decoding="async"';
     return `<figure class="${cardClass}" data-ba="${esc(pair.key)}">
       <div class="ba-frame" data-touch="${touch}" style="aspect-ratio: ${pair.before.width} / ${pair.before.height}; --pos:${start}%">
-        <img src="${esc(pair.before.src)}" alt="${esc(pair.before.alt)}" width="${pair.before.width}" height="${pair.before.height}" loading="lazy" decoding="async" draggable="false" class="ba-img">
-        <img src="${esc(pair.after.src)}" alt="${esc(pair.after.alt)}" width="${pair.after.width}" height="${pair.after.height}" loading="lazy" decoding="async" draggable="false" class="ba-img ba-after">
+        <img src="${esc(pair.before.src)}" alt="${esc(pair.before.alt)}" width="${pair.before.width}" height="${pair.before.height}" ${load} draggable="false" class="ba-img">
+        <img src="${esc(pair.after.src)}" alt="${esc(pair.after.alt)}" width="${pair.after.width}" height="${pair.after.height}" ${load} draggable="false" class="ba-img ba-after">
         <span class="ba-tag ba-tag-after" aria-hidden="true">После</span>
         <span class="ba-tag ba-tag-before" aria-hidden="true">До</span>
         <div class="ba-line" aria-hidden="true"></div>
@@ -965,14 +975,97 @@
       ${renderCookieBanner()}`;
   }
 
+  function syncServiceRowStates() {
+    const list = document.getElementById("svc-list");
+    if (!list) return;
+    const b = booking();
+    list.querySelectorAll(".svc-item--row").forEach((li) => {
+      const key = li.getAttribute("data-key");
+      const svc = site.services.find((s) => s.key === key);
+      const index = site.services.indexOf(svc);
+      if (!svc || index < 0) return;
+      const open = state.serviceOpenDesktop === svc.key;
+      const highlighted = state.serviceHover === index || open;
+      li.setAttribute("data-active", String(highlighted));
+      li.setAttribute("data-open", String(open));
+      const row = li.querySelector(".svc-row");
+      if (row) row.setAttribute("aria-expanded", String(open));
+      const desc = li.querySelector(".svc-desc");
+      if (desc) desc.classList.toggle("svc-desc--clamp", !open);
+      const panel = li.querySelector(".svc-row-panel");
+      if (panel) panel.setAttribute("data-open", String(open));
+      const canBook = svcCanBook(svc);
+      if (!canBook) return;
+      const selected = b.isSelected(svc.priceItem);
+      const pill = li.querySelector(".svc-pill");
+      if (pill) {
+        pill.setAttribute("data-selected", String(selected));
+        pill.innerHTML = `${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке" : "В заявку"}`;
+      }
+      const act = li.querySelector(".svc-act--main[data-toggle-item]");
+      if (act) {
+        act.setAttribute("aria-pressed", String(selected));
+        act.innerHTML = `${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке — убрать" : "Добавить в заявку"}`;
+      }
+    });
+  }
+
+  function syncServicesCaption() {
+    const caption = document.querySelector("#services .svc-caption");
+    if (!caption) return;
+    const active = site.services[activeServiceIndex()] || site.services[0];
+    const title = caption.querySelector(".svc-caption-title");
+    if (title) title.textContent = active.title;
+    let priceEl = caption.querySelector(".svc-caption-price");
+    if (active.price) {
+      if (!priceEl) {
+        priceEl = document.createElement("span");
+        priceEl.className = "svc-caption-price";
+        caption.appendChild(priceEl);
+      }
+      priceEl.textContent = active.price;
+    } else if (priceEl) {
+      priceEl.remove();
+    }
+  }
+
+  function syncServicesFoot() {
+    const foot = document.getElementById("svc-foot");
+    if (foot) foot.innerHTML = servicesFootHtml();
+  }
+
+  function canPatchServicesChrome() {
+    return isSplit() && site.beforeAfter[0] && document.querySelector("#services .svc-frame--compare");
+  }
+
+  function patchServicesChrome() {
+    syncServiceRowStates();
+    syncServicesCaption();
+    syncServicesFoot();
+  }
+
   function refreshServicesChrome() {
     const root = document.getElementById("services");
     if (!root) return;
+    if (canPatchServicesChrome()) {
+      patchServicesChrome();
+      return;
+    }
     const next = document.createElement("div");
     next.innerHTML = renderServices();
     root.replaceWith(next.firstElementChild);
     bindServices();
     bindBeforeAfter();
+  }
+
+  function preloadBeforeAfterPair() {
+    const pair = site.beforeAfter[0];
+    if (!pair) return;
+    [pair.before.src, pair.after.src].forEach((src) => {
+      const img = new Image();
+      img.decoding = "async";
+      img.src = src;
+    });
   }
 
   function refreshBooking() {
@@ -1401,7 +1494,7 @@
 
       frame.addEventListener("pointermove", (event) => {
         if (event.pointerType === "mouse" && !touch) {
-          setPos(posFromEvent(event));
+          setPos(posFromEvent(event), true);
           return;
         }
         if (!pointer || pointer.id !== event.pointerId) return;
@@ -1629,6 +1722,7 @@
 
   applyTheme();
   renderPage();
+  preloadBeforeAfterPair();
   if (window.ML_LEGAL && typeof window.ML_LEGAL.syncSchema === "function") {
     window.ML_LEGAL.syncSchema();
   }

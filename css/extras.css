@@ -975,6 +975,11 @@ html {
   width: 100%;
   min-height: 0;
   border-radius: inherit;
+  contain: layout style;
+}
+.svc-frame--compare .ba-after {
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 .svc-frame--compare .svc-caption {
   pointer-events: none;
