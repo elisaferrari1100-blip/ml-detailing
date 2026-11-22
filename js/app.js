@@ -594,12 +594,30 @@
     return `«${review.text}»`;
   }
 
+  function reviewServiceTheme(text) {
+    const t = text.toLowerCase();
+    if (/тониров/i.test(t) && /мойк|детейлинг/i.test(t)) return "Мойка и тонировка";
+    if (/тониров/i.test(t) && /бронепл[её]нк|обкле/i.test(t)) return "Тонировка и бронеплёнка";
+    if (/химчист/i.test(t)) return "Химчистка";
+    if (/тониров/i.test(t)) return "Тонировка";
+    if (/мойк|детейлинг/i.test(t)) return "Мойка";
+    if (/полиров/i.test(t)) return "Полировка";
+    return "Детейлинг";
+  }
+
+  function yandexReviewsPageUrl() {
+    const base = site.contacts?.yandexOrgUrl || "https://yandex.ru/maps/org/ml/13418438493/";
+    return `${base.replace(/\/?$/, "/")}reviews/`;
+  }
+
   function renderReviews() {
     if (!site.reviews.length) return "";
     const s = site.reviewSummary;
+    const yandexReviews = yandexReviewsPageUrl();
     const cards = site.reviews
       .map((r) => {
         const open = !!state.reviewOpen[r.key];
+        const theme = r.serviceTheme || reviewServiceTheme(r.text);
         return `<li class="review-card glass flex flex-col gap-3 rounded-2xl p-4 md:gap-4 md:p-6" data-review="${esc(r.key)}">
           <div class="flex items-center gap-3">
             <span aria-hidden="true" class="review-avatar display grid size-10 shrink-0 place-items-center rounded-full text-sm font-semibold text-ink md:size-12">${esc(r.initials)}</span>
@@ -608,8 +626,10 @@
               <p class="flex items-center gap-1.5 text-[13px] text-chrome">${icon("map-pin", "size-3.5")}${esc(r.source)}</p>
             </div>
           </div>
+          <p class="review-theme text-[11px] font-semibold uppercase tracking-wide text-amber md:text-xs">${esc(theme)}</p>
           ${stars(r.rating, `Оценка ${r.rating} из 5`)}
           <blockquote class="review-text text-sm leading-relaxed text-ink/90 md:text-[15px] ${open ? "" : "review-text-clamp"}">${esc(reviewQuote(r)).replace(/\n/g, "<br>")}</blockquote>
+          <a class="review-yandex-link mt-auto text-[13px] font-medium text-amber underline-offset-2 hover:underline" href="${esc(yandexReviews)}" target="_blank" rel="noopener noreferrer">На Яндекс Картах</a>
           <button type="button" class="review-toggle self-start text-[13px] font-medium text-amber md:hidden" aria-expanded="${open}" data-toggle-review="${esc(r.key)}">${open ? "Свернуть" : "Читать полностью"}</button>
         </li>`;
       })
@@ -1309,6 +1329,44 @@
     });
   }
 
+  function bindReviews() {
+    const track = document.getElementById("review-track");
+    if (!track || reducedMotion()) return;
+    const cards = track.querySelectorAll(".review-card");
+    if (!cards.length) return;
+    const fineHover = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    if (fineHover) return;
+
+    const clearPressed = () => {
+      cards.forEach((c) => c.classList.remove("review-card--pressed"));
+    };
+
+    track.addEventListener("scroll", clearPressed, { passive: true });
+
+    const gridLayout = window.matchMedia("(min-width: 768px)").matches;
+    const io = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const card = entry.target;
+          const prominent = entry.isIntersecting && entry.intersectionRatio >= 0.62;
+          card.classList.toggle("review-card--in-view", prominent);
+        });
+      },
+      gridLayout
+        ? { root: null, threshold: [0, 0.35, 0.62] }
+        : { root: track, threshold: [0, 0.35, 0.62, 0.85] },
+    );
+    cards.forEach((card) => io.observe(card));
+
+    document.addEventListener(
+      "pointerdown",
+      (event) => {
+        if (!event.target.closest("#reviews")) clearPressed();
+      },
+      { passive: true },
+    );
+  }
+
   function bindBeforeAfter() {
     document.querySelectorAll("[data-ba]").forEach((card) => {
       const frame = card.querySelector(".ba-frame");
@@ -1516,6 +1574,13 @@
         if (list) list.innerHTML = renderRequestList();
         return;
       }
+      const reviewCardTap = event.target.closest(".review-card");
+      if (reviewCardTap && isTouch() && !event.target.closest("a, button")) {
+        const track = document.getElementById("review-track");
+        track?.querySelectorAll(".review-card").forEach((c) => c.classList.remove("review-card--pressed"));
+        reviewCardTap.classList.add("review-card--pressed");
+        return;
+      }
       const reviewBtn = event.target.closest("[data-toggle-review]");
       if (reviewBtn) {
         const key = reviewBtn.getAttribute("data-toggle-review");
@@ -1581,6 +1646,7 @@
   bindWorks();
   bindBeforeAfter();
   bindFormSlot();
+  bindReviews();
   bindGlobal();
   bindCookieBanner();
 
