@@ -419,69 +419,120 @@ main .section + .section {
 
 /* ——— Site footer ——— */
 .site-footer {
-  border-top: 1px solid rgba(255,255,255,0.1);
-  background: var(--color-obsidian);
+  position: relative;
+  border-top: 1px solid rgba(229, 184, 105, 0.2);
+  background:
+    radial-gradient(90% 120% at 50% 0%, rgba(229, 184, 105, 0.07), transparent 58%),
+    linear-gradient(180deg, #0b0b0e 0%, var(--color-obsidian) 100%);
   color: var(--color-chrome);
-  padding: 64px 0 32px;
+  padding: clamp(36px, 5vw, 52px) 0 clamp(28px, 4vw, 40px);
   font-size: 14px;
+}
+.footer-shell {
+  position: relative;
 }
 .footer-grid {
   display: grid;
-  gap: 40px;
+  gap: clamp(24px, 3vw, 32px);
   grid-template-columns: 1fr;
+  align-items: start;
 }
-/* Документы и реквизиты вынесены в полосу .legal-bar — в сетке остаются бренд и разделы. */
-@media (min-width: 768px) {
-  .footer-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+@media (min-width: 640px) {
+  .footer-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 28px 24px;
+  }
+  .footer-col--brand { grid-column: 1 / -1; }
 }
-@media (min-width: 1100px) {
-  .footer-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
+@media (min-width: 1024px) {
+  .footer-grid {
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 0.75fr) minmax(0, 1fr) minmax(0, 0.95fr);
+    gap: 24px 28px;
+  }
+  .footer-col--brand { grid-column: auto; }
 }
-.footer-brand .brand-lockup--monogram .brand-monogram {
+.footer-brand-lockup {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+.footer-brand-lockup .brand-monogram--footer {
   display: inline-flex;
   align-items: center;
-  gap: 0.22em;
+  gap: 0.2em;
   font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
-  font-size: 1.3125rem;
+  font-size: clamp(2rem, 3.6vw, 2.5rem);
   font-weight: 700;
   line-height: 1;
   letter-spacing: 0;
-  color: #ededed;
-}
-.footer-brand .brand-monogram__letter {
-  display: inline-block;
-}
-.footer-lead { margin: 14px 0 0; max-width: 28ch; line-height: 1.55; }
-.footer-heading {
-  margin: 0 0 14px;
-  font-family: var(--font-display);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
   color: var(--color-ink);
 }
-.footer-links { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
+.footer-brand-lockup .brand-monogram__letter {
+  display: inline-block;
+}
+.footer-wordmark {
+  font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.38em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-amber) 88%, #fff);
+}
+.footer-lead {
+  margin: 0 0 16px;
+  max-width: 26ch;
+  line-height: 1.55;
+  color: #c4c4cc;
+  font-size: 13px;
+}
+.footer-cta { margin-top: 2px; }
+.footer-heading {
+  margin: 0 0 12px;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: color-mix(in srgb, var(--color-amber) 75%, var(--color-ink));
+}
+.footer-links,
+.footer-contact-list,
+.footer-docs-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+}
 .footer-links a,
-.site-footer a {
+.footer-doc-link,
+.footer-contact-line {
+  display: inline-block;
   color: var(--color-chrome);
   text-decoration: none;
-}
-.site-footer a:hover { color: var(--color-amber); }
-.footer-req { margin: 0; display: grid; gap: 6px; line-height: 1.5; }
-.footer-req .placeholder {
-  color: var(--color-amber-light);
-  font-family: var(--font-sans);
-}
-.footer-bottom {
-  margin-top: 48px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(255,255,255,0.08);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  gap: 10px;
+  line-height: 1.45;
   font-size: 13px;
+  transition: color 0.18s ease;
+}
+.footer-links a:hover,
+.footer-doc-link:hover,
+.footer-contact-line:hover {
+  color: var(--color-amber);
+}
+.footer-contact-phone {
+  font-weight: 500;
+  color: var(--color-ink);
+}
+.footer-contact-phone:hover { color: var(--color-amber); }
+.footer-contact-ext {
+  color: color-mix(in srgb, var(--color-amber-light) 70%, var(--color-chrome));
+}
+.footer-doc-link {
+  border-bottom: 1px solid transparent;
+}
+.footer-doc-link:hover {
+  border-bottom-color: rgba(229, 184, 105, 0.35);
 }
 
 /* ——— Consent + cookie ——— */
