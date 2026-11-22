@@ -1002,6 +1002,9 @@ html {
 }
 
 /* ——— Цены ——— */
+#request .req-pricelist > .req-list {
+  margin-top: 1.5rem;
+}
 #request .req-layout {
   display: grid;
   gap: 1.5rem;
