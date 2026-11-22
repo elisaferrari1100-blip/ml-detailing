@@ -172,33 +172,84 @@
     });
   }
 
-  function compactReqChip(label, html) {
-    return `<span class="legal-chip"><span class="legal-chip-k">${esc(label)}</span><span class="legal-chip-v">${html}</span></span>`;
+  function footerBrandMonogram(className) {
+    const letters = (site.brand && site.brand.monogramLetters) || ["M", "L"];
+    const inner = letters
+      .map(
+        (ch) =>
+          `<span class="brand-monogram__letter brand-monogram__letter--${esc(String(ch).toLowerCase())}">${esc(ch)}</span>`
+      )
+      .join("");
+    return `<span class="${className}" aria-hidden="true">${inner}</span>`;
   }
 
-  function barHtml(opts) {
-    const prefix = (opts && opts.prefix) || "./legal/";
+  function footerReqColumnHtml() {
+    const address = (site.contacts && site.contacts.address) || "";
+    return `<ul class="footer-req-list">
+      ${reqItem("Исполнитель", fieldHtml("legalName"))}
+      ${reqItem("ИНН", fieldHtml("inn"))}
+      ${reqItem("Телефон", fieldHtml("phone"))}
+      ${address ? reqItem("Адрес", esc(address)) : ""}
+      ${reqItemIf("ogrn", "ОГРН/ОГРНИП")}
+      ${reqItemIf("email", "E-mail")}
+    </ul>`;
+  }
+
+  function footerMetaHtml(prefix) {
     const year = new Date().getFullYear();
     const studio = (site.contacts && site.contacts.studioName) || "ML";
     const city = (site.brand && site.brand.city) || "Нижний Новгород";
-    const chips = [
-      compactReqChip("Исполнитель", fieldHtml("legalName")),
-      compactReqChip("ИНН", fieldHtml("inn")),
-      !isPlaceholder(FIELDS.ogrn) ? compactReqChip("ОГРН/ОГРНИП", fieldHtml("ogrn")) : "",
-      !isPlaceholder(FIELDS.email) ? compactReqChip("E-mail", fieldHtml("email")) : "",
-      compactReqChip("Телефон", fieldHtml("phone")),
-    ]
-      .filter(Boolean)
+    return `<div class="footer-meta" id="legal-bar" aria-label="Юридическая информация">
+      <p class="footer-meta-line">
+        <span>© ${year} ${esc(studio)} · ${esc(city)}</span>
+        <span class="footer-meta-sep" aria-hidden="true">·</span>
+        <a href="${prefix}cookies.html" data-legal-popup>Cookie</a>
+        <span class="footer-meta-sep" aria-hidden="true">·</span>
+        <a href="${prefix}offer.html" data-legal-popup>Цены не являются публичной офертой</a>
+      </p>
+    </div>`;
+  }
+
+  function siteFooterHtml(opts) {
+    const prefix = (opts && opts.prefix) || "./legal/";
+    const onHome = !(opts && opts.home === false);
+    const homeHref = onHome ? "#hero" : "../index.html";
+    const brandName = (site.brand && site.brand.name) || "ML";
+    const nav = (site.nav || [])
+      .map(function (item) {
+        const href = onHome ? item.href : "../index.html" + item.href;
+        return `<li><a href="${esc(href)}">${esc(item.label)}</a></li>`;
+      })
       .join("");
-    return `<section class="legal-bar" id="legal-bar" aria-label="Юридическая информация">
-      <div class="container-x legal-bar-inner">
-        <div class="legal-bar-foot">
-          <p class="legal-bar-copy">© ${year} ${esc(studio)} · ${esc(city)}</p>
-          <div class="legal-req-compact" role="list">${chips}</div>
-          <p class="legal-bar-offer"><a href="${prefix}offer.html" data-legal-popup>Цены не являются публичной офертой</a></p>
+    return `<footer class="site-footer" aria-label="Подвал сайта">
+      <div class="container-x footer-shell">
+        <div class="footer-grid">
+          <div class="footer-col footer-col--brand">
+            <a href="${esc(homeHref)}" class="brand-lockup brand-lockup--monogram footer-brand-lockup" aria-label="${esc(brandName)} — на главную">
+              ${footerBrandMonogram("brand-monogram brand-monogram--footer")}
+            </a>
+            <p class="footer-lead">Детейлинг в Нижнем Новгороде: тонировка, бронирование плёнкой, химчистка салона.</p>
+          </div>
+          <div class="footer-col footer-col--nav">
+            <p class="footer-heading">Разделы</p>
+            <ul class="footer-links">${nav}</ul>
+          </div>
+          <div class="footer-col footer-col--docs">
+            <p class="footer-heading">Документы</p>
+            <ul class="footer-docs-list">${footerDocsHtml(prefix)}</ul>
+          </div>
+          <div class="footer-col footer-col--req">
+            <p class="footer-heading">Реквизиты</p>
+            ${footerReqColumnHtml()}
+          </div>
         </div>
+        ${footerMetaHtml(prefix)}
       </div>
-    </section>`;
+    </footer>`;
+  }
+
+  function barHtml(opts) {
+    return siteFooterHtml({ prefix: (opts && opts.prefix) || "./legal/", home: (opts && opts.prefix) === "./" ? false : true });
   }
 
   function cookieHtml(cookiesHref) {
@@ -397,6 +448,7 @@
   window.ML_LEGAL = {
     fields: FIELDS,
     barHtml: barHtml,
+    siteFooterHtml: siteFooterHtml,
     footerDocsHtml: footerDocsHtml,
     cookieHtml: cookieHtml,
     fill: fill,
@@ -409,7 +461,7 @@
   function bootLegalPage() {
     if (!document.body || !document.body.classList.contains("legal-page")) return;
     const mount = document.getElementById("legal-bar-mount");
-    if (mount) mount.outerHTML = barHtml({ prefix: "./" });
+    if (mount) mount.outerHTML = siteFooterHtml({ prefix: "./", home: false });
     fill(document);
     const cookieMount = document.getElementById("cookie-banner-mount");
     if (cookieMount && !document.getElementById("cookie-banner")) {

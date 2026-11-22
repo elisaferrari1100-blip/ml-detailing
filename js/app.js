@@ -917,76 +917,13 @@
   }
 
   function renderFooter() {
-    const c = site.contacts || {};
-    const vk = site.social && site.social.vk;
-    const nav = site.nav
-      .map((item) => `<li><a href="${esc(item.href)}">${esc(item.label)}</a></li>`)
-      .join("");
-    const docs =
-      window.ML_LEGAL && typeof window.ML_LEGAL.footerDocsHtml === "function"
-        ? window.ML_LEGAL.footerDocsHtml("./legal/")
-        : "";
-    const schedule = `${c.schedule || ""}${c.scheduleNote || ""}`.trim();
-    const studioPhone = c.phone || "";
-    const studioTel = studioPhone.replace(/[^\d+]/g, "");
-    const maximPhone = (c.maximPhone || "").trim();
-    const maximTel = maximPhone.replace(/[^\d+]/g, "");
-    const maximName = (c.maximName || "Максим").trim() || "Максим";
-    const wordmark = site.brand.heroWordmark || "DETAILING";
-    const yandexLabel = (c.yandexOrgUrl || "").includes("yandex") ? "Яндекс Карты" : "Открыть на карте";
-    const addressRow = c.address
-      ? `<li><a class="footer-contact-line" href="${esc(c.yandexOrgUrl || "#about")}"${
-          c.yandexOrgUrl ? ' target="_blank" rel="noopener noreferrer"' : ""
-        }>${esc(c.address)}</a></li>`
-      : "";
-    const scheduleRow = schedule ? `<li class="footer-contact-line">${esc(schedule)}</li>` : "";
-    const studioPhoneRow = studioPhone
-      ? `<li><a class="footer-contact-line footer-contact-phone" href="tel:${esc(studioTel)}">${esc(studioPhone)}</a></li>`
-      : "";
-    const maximRow = maximPhone
-      ? `<li class="footer-contact-line">${esc(maximName)}: <a class="footer-contact-phone" href="tel:${esc(maximTel)}">${esc(maximPhone)}</a></li>`
-      : "";
-    const vkRow =
-      vk && vk.url
-        ? `<li><a class="footer-contact-line footer-contact-ext" href="${esc(vk.url)}" target="_blank" rel="noopener noreferrer me">${esc(vk.title || "ВКонтакте")}</a></li>`
-        : "";
-    const yandexRow = c.yandexOrgUrl
-      ? `<li><a class="footer-contact-line footer-contact-ext" href="${esc(c.yandexOrgUrl)}" target="_blank" rel="noopener noreferrer">${esc(yandexLabel)}</a></li>`
-      : "";
-    return `<footer class="site-footer">
-      <div class="container-x footer-shell">
-        <div class="footer-grid">
-          <div class="footer-col footer-col--brand">
-            <a href="#hero" class="brand-lockup brand-lockup--monogram footer-brand-lockup" aria-label="${esc(site.brand.name)} — на главную">
-              ${brandMonogramLetters("brand-monogram brand-monogram--footer")}
-              <span class="footer-wordmark">${esc(wordmark)}</span>
-            </a>
-            <p class="footer-lead">Детейлинг в Нижнем Новгороде: тонировка, бронирование плёнкой, химчистка салона.</p>
-            ${btn({ variant: "primary", href: "#request", className: "footer-cta !min-h-11 !px-5 !text-[13px]", children: "Записаться" })}
-          </div>
-          <div class="footer-col footer-col--nav">
-            <p class="footer-heading">Разделы</p>
-            <ul class="footer-links">${nav}</ul>
-          </div>
-          <div class="footer-col footer-col--contacts">
-            <p class="footer-heading">Контакты</p>
-            <ul class="footer-contact-list">
-              ${addressRow}${scheduleRow}${studioPhoneRow}${maximRow}${vkRow}${yandexRow}
-            </ul>
-          </div>
-          <div class="footer-col footer-col--docs">
-            <p class="footer-heading">Документы</p>
-            <ul class="footer-docs-list">${docs}</ul>
-          </div>
-        </div>
-      </div>
-    </footer>`;
+    if (window.ML_LEGAL && typeof window.ML_LEGAL.siteFooterHtml === "function") {
+      return window.ML_LEGAL.siteFooterHtml({ prefix: "./legal/", home: true });
+    }
+    return "";
   }
 
   function renderLegalBar() {
-    if (window.ML_LEGAL && typeof window.ML_LEGAL.barHtml === "function") {
-      return window.ML_LEGAL.barHtml({ prefix: "./legal/" });
-    }
     return "";
   }
 
