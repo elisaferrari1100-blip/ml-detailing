@@ -54,6 +54,17 @@
     </picture>`;
   }
 
+  function brandMonogramLetters(className = "brand-monogram") {
+    const letters = site.brand.monogramLetters || ["M", "L"];
+    const inner = letters
+      .map(
+        (ch) =>
+          `<span class="brand-monogram__letter brand-monogram__letter--${esc(String(ch).toLowerCase())}">${esc(ch)}</span>`
+      )
+      .join("");
+    return `<span class="${className}" aria-hidden="true">${inner}</span>`;
+  }
+
   function assetUrl(rel) {
     return new URL(rel, document.baseURI).href;
   }
@@ -283,9 +294,8 @@
     return `<header id="site-header">
       <div class="container-x header-inner">
         <div class="glass header-bar flex items-center justify-between gap-4 rounded-full py-2 pl-3 pr-2 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.8)]">
-          <a href="#hero" class="brand-lockup" aria-label="${esc(site.brand.name)} — на главную">
-            ${brandMark()}
-            <span class="brand-name">${esc(site.brand.name)}</span>
+          <a href="#hero" class="brand-lockup brand-lockup--monogram" aria-label="${esc(site.brand.name)} — на главную">
+            ${brandMonogramLetters()}
           </a>
           <nav aria-label="Разделы" class="header-nav hidden lg:block">
             <ul class="m-0 flex list-none gap-1 p-0">${links}</ul>

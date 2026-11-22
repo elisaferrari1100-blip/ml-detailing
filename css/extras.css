@@ -44,19 +44,23 @@
   width: auto;
   border-radius: 0;
 }
-#site-header .brand-lockup picture {
-  display: block;
-  line-height: 0;
-}
-#site-header .brand-lockup img,
-#site-header .brand-mark {
-  height: 36px;
-  width: auto;
-  max-width: 100%;
-}
-#site-header .brand-lockup {
+#site-header .brand-lockup--monogram {
   margin-inline-start: 2px;
   padding-inline-start: 6px;
+}
+#site-header .brand-monogram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22em;
+  font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
+  font-size: 1.3125rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ededed;
+}
+#site-header .brand-monogram__letter {
+  display: inline-block;
 }
 .brand-lockup .brand-name {
   font-family: var(--font-display);
@@ -64,15 +68,6 @@
   font-weight: 600;
   letter-spacing: 0.18em;
   color: var(--color-ink);
-}
-/* original styles.css has .hidden but not sm:inline */
-#site-header .brand-lockup .brand-name {
-  display: none;
-}
-@media (min-width: 640px) {
-  #site-header .brand-lockup .brand-name {
-    display: inline;
-  }
 }
 .header-actions {
   display: flex;
