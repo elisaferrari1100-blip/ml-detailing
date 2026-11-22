@@ -437,7 +437,20 @@ main .section + .section {
 @media (min-width: 1100px) {
   .footer-grid { grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr); }
 }
-.footer-brand .brand-lockup img { height: 44px; width: auto; border-radius: 0; }
+.footer-brand .brand-lockup--monogram .brand-monogram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22em;
+  font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
+  font-size: 1.3125rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ededed;
+}
+.footer-brand .brand-monogram__letter {
+  display: inline-block;
+}
 .footer-lead { margin: 14px 0 0; max-width: 28ch; line-height: 1.55; }
 .footer-heading {
   margin: 0 0 14px;

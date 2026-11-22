@@ -76,6 +76,7 @@
   function fill(root) {
     const scope = root || document;
     scope.querySelectorAll("[data-legal]").forEach(applyField);
+    hideEmptyLegalFields(scope);
   }
 
   function onLegalPath() {
@@ -134,6 +135,31 @@
     return `<li><span class="legal-k">${esc(label)}</span><span class="legal-v">${html}</span></li>`;
   }
 
+  function reqItemIf(key, label) {
+    if (isPlaceholder(FIELDS[key])) return "";
+    return reqItem(label, fieldHtml(key));
+  }
+
+  function hideEmptyLegalFields(scope) {
+    const root = scope || document;
+    ["email", "ogrn"].forEach(function (key) {
+      if (!isPlaceholder(FIELDS[key])) return;
+      root.querySelectorAll('[data-legal="' + key + '"]').forEach(function (el) {
+        const wrap = el.closest("[data-legal-skip-when-empty]");
+        if (wrap) {
+          wrap.remove();
+          return;
+        }
+        const li = el.closest("li");
+        if (li && li.querySelector(".legal-k")) {
+          li.hidden = true;
+          return;
+        }
+        el.remove();
+      });
+    });
+  }
+
   function barHtml(opts) {
     const prefix = (opts && opts.prefix) || "./legal/";
     const year = new Date().getFullYear();
@@ -148,8 +174,8 @@
           <ul class="legal-req">
             ${reqItem("Исполнитель", fieldHtml("legalName"))}
             ${reqItem("ИНН", fieldHtml("inn"))}
-            ${reqItem("ОГРН/ОГРНИП", fieldHtml("ogrn"))}
-            ${reqItem("E-mail", fieldHtml("email"))}
+            ${reqItemIf("ogrn", "ОГРН/ОГРНИП")}
+            ${reqItemIf("email", "E-mail")}
             ${reqItem("Телефон", fieldHtml("phone"))}
             ${address ? reqItem("Адрес", esc(address)) : ""}
           </ul>
