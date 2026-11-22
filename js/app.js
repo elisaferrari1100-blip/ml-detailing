@@ -347,6 +347,17 @@
     const vk = site.social && site.social.vk;
     const mapLabel = c.yandexOrgUrl.includes("yandex") ? "Открыть в Яндекс Картах" : "Открыть на карте";
     const tel = c.phone.replace(/[^\d+]/g, "");
+    const maximPhone = (c.maximPhone || "").trim();
+    const maximTel = maximPhone.replace(/[^\d+]/g, "");
+    const maximName = (c.maximName || "Максим").trim() || "Максим";
+    const maximRow = maximPhone
+      ? `<p class="about-map-meta-line about-map-meta-maxim m-0 mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+          <span class="inline-flex items-center gap-2">
+            ${icon("phone", "size-5 shrink-0 text-amber")}
+            <span>${esc(maximName)}: <a href="tel:${esc(maximTel)}" class="underline-offset-4 hover:text-amber hover:underline">${esc(maximPhone)}</a></span>
+          </span>
+        </p>`
+      : "";
     const overlay = isTouch() && !state.mapUnlocked
       ? `<button type="button" data-unlock-map class="absolute inset-0 z-[1] flex items-end justify-center bg-transparent pb-5"><span class="glass rounded-full px-4 py-2 text-sm text-ink">Нажмите, чтобы двигать карту</span></button>`
       : "";
@@ -373,6 +384,7 @@
             <a href="tel:${esc(tel)}" class="underline-offset-4 hover:text-amber hover:underline">${esc(c.phone)}</a>
           </span>
         </p>
+        ${maximRow}
       </div>
       <div class="about-map-actions flex flex-nowrap gap-2 sm:gap-2.5">
         ${btn({ arrow: true, href: "#request", className: "about-map-btn", children: "Записаться" })}
