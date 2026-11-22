@@ -912,9 +912,8 @@
       <div class="container-x">
         <div class="footer-grid">
           <div class="footer-brand">
-            <a href="#hero" class="brand-lockup" aria-label="${esc(site.brand.name)} — на главную">
-              ${brandMark()}
-              <span class="brand-name">${esc(site.brand.name)}</span>
+            <a href="#hero" class="brand-lockup brand-lockup--monogram" aria-label="${esc(site.brand.name)} — на главную">
+              ${brandMonogramLetters()}
             </a>
             <p class="footer-lead">Детейлинг в Нижнем Новгороде: тонировка, бронирование плёнкой, химчистка салона.</p>
           </div>

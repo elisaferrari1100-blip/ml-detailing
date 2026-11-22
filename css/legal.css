@@ -297,6 +297,25 @@ html.has-cookie-banner body { padding-bottom: 148px; }
   line-height: 1.55;
 }
 .legal-note + .legal-note { margin-top: 0; }
+.legal-header .brand-lockup--monogram {
+  margin-inline-start: 2px;
+  padding-inline-start: 6px;
+}
+.legal-header .brand-monogram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.22em;
+  font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
+  font-size: 1.3125rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: 0;
+  color: #ededed;
+}
+.legal-header .brand-monogram__letter {
+  display: inline-block;
+}
+
 .legal-page .legal-bar { margin-top: 0; }
 @media (max-width: 520px) {
   .legal-topbar { border-radius: 20px; }
@@ -309,6 +328,8 @@ html.legal-modal-open {
 }
 html.legal-modal-open body {
   overflow: hidden;
+  touch-action: none;
+  overscroll-behavior: none;
 }
 .legal-modal {
   position: fixed;
