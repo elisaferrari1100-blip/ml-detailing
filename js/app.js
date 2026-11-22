@@ -431,9 +431,14 @@
     return `<span class="svc-price ${price ? "" : "svc-price--none"}">${esc(price ?? "по запросу")}</span>`;
   }
 
+  function svcCanBook(svc) {
+    return !!(svc.priceItem && priceMap.has(svc.priceItem));
+  }
+
   function renderServiceDesktop(svc, index) {
     const b = booking();
-    const selected = b.isSelected(svc.priceItem);
+    const canBook = svcCanBook(svc);
+    const selected = canBook && b.isSelected(svc.priceItem);
     const open = state.serviceOpenDesktop === svc.key;
     const highlighted = state.serviceHover === index || open;
     return `<li class="svc-item svc-item--row" data-key="${esc(svc.key)}" data-active="${highlighted}" data-open="${open}">
@@ -445,7 +450,11 @@
           </span>
           <span class="svc-row-side">
             ${svcPrice(svc.price)}
-            <span class="svc-pill" data-selected="${selected}" aria-hidden="true">${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке" : "В заявку"}</span>
+            ${
+              canBook
+                ? `<span class="svc-pill" data-selected="${selected}" aria-hidden="true">${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке" : "В заявку"}</span>`
+                : ""
+            }
             ${icon("chevron-down", "svc-chevron size-5")}
           </span>
         </span>
@@ -453,8 +462,12 @@
       <div class="svc-acc-panel svc-row-panel" data-open="${open}">
         <div class="svc-acc-clip">
           <div class="svc-row-actions">
-            <button type="button" class="svc-act svc-act--main" aria-pressed="${selected}" data-toggle-item="${esc(svc.priceItem)}">${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке — убрать" : "Добавить в заявку"}</button>
-            <a href="#request" class="svc-act">Смотреть цены</a>
+            ${
+              canBook
+                ? `<button type="button" class="svc-act svc-act--main" aria-pressed="${selected}" data-toggle-item="${esc(svc.priceItem)}">${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке — убрать" : "Добавить в заявку"}</button>`
+                : ""
+            }
+            <a href="#request" class="svc-act${canBook ? "" : " svc-act--main"}">Смотреть цены</a>
           </div>
         </div>
       </div>
@@ -463,7 +476,8 @@
 
   function renderServiceTouch(svc) {
     const b = booking();
-    const selected = b.isSelected(svc.priceItem);
+    const canBook = svcCanBook(svc);
+    const selected = canBook && b.isSelected(svc.priceItem);
     const open = state.serviceOpenTouch === svc.key;
     return `<li class="svc-item" data-key="${esc(svc.key)}">
       <button type="button" class="svc-acc-head" data-open="${open}" aria-expanded="${open}" data-toggle-service="${esc(svc.key)}">
@@ -475,12 +489,21 @@
           <div class="svc-acc-body">
             ${picture({ ...svc.image, decorative: true, className: "svc-acc-photo" })}
             <p class="svc-desc">${esc(svc.description)}</p>
-            ${btn({
-              variant: selected ? "glass" : "primary",
-              className: "svc-acc-btn",
-              attrs: `aria-pressed="${selected}" data-toggle-item="${esc(svc.priceItem)}"`,
-              children: `${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке — убрать" : "Добавить в заявку"}`,
-            })}
+            ${
+              canBook
+                ? btn({
+                    variant: selected ? "glass" : "primary",
+                    className: "svc-acc-btn",
+                    attrs: `aria-pressed="${selected}" data-toggle-item="${esc(svc.priceItem)}"`,
+                    children: `${selected ? icon("check", "size-4") : icon("plus", "size-4")}${selected ? "В заявке — убрать" : "Добавить в заявку"}`,
+                  })
+                : btn({
+                    variant: "glass",
+                    className: "svc-acc-btn",
+                    href: "#request",
+                    children: "Смотреть цены",
+                  })
+            }
           </div>
         </div>
       </div>
@@ -501,25 +524,17 @@
       b.items.length > 0
         ? `<p class="text-sm text-chrome">Услуги добавлены в заявку</p>${btn({ variant: "primary", arrow: true, attrs: 'data-go-form', children: "Перейти к заявке" })}`
         : `<p class="text-sm text-chrome">${esc(split ? site.sections.services.hintDesktop : site.sections.services.hintTouch)}</p>${btn({ variant: "glass", href: "#request", children: "Смотреть цены" })}`;
-    const frame = split
-      ? `<div class="svc-frame" role="img" aria-label="${esc(active.image.alt)}">
-          ${site.services
-            .map(
-              (s, i) =>
-                picture({
-                  ...s.image,
-                  decorative: true,
-                  className: `svc-frame-photo ${i === activeIdx ? "is-active" : ""}`,
-                  imgClass: "svc-frame-img",
-                })
-            )
-            .join("")}
-          <div class="svc-caption glass">
-            <span class="svc-caption-title display">${esc(active.title)}</span>
-            ${active.price ? `<span class="svc-caption-price">${esc(active.price)}</span>` : ""}
-          </div>
-        </div>`
-      : "";
+    const comparePair = site.beforeAfter[0];
+    const frame =
+      split && comparePair
+        ? `<div class="svc-frame svc-frame--compare">
+            ${renderBaCompare(comparePair, { cardClass: "ba-card svc-ba-card" })}
+            <div class="svc-caption glass">
+              <span class="svc-caption-title display">${esc(active.title)}</span>
+              ${active.price ? `<span class="svc-caption-price">${esc(active.price)}</span>` : ""}
+            </div>
+          </div>`
+        : "";
     return `<section id="services" aria-labelledby="services-title" class="section isolate">
       ${backdrop("box-corridor", 0.7)}
       <div class="container-x">
@@ -539,36 +554,20 @@
     return Math.min(100, Math.max(0, v));
   }
 
-  function renderBeforeAfter() {
-    if (!site.beforeAfter.length) return "";
-    const d = site.sections.beforeAfter;
+  function renderBaCompare(pair, { cardClass = "ba-card" } = {}) {
     const touch = isTouch();
-    const cards = site.beforeAfter
-      .map((pair) => {
-        const start = touch ? 50 : 0;
-        return `<figure class="ba-card" data-ba="${esc(pair.key)}">
-          <div class="ba-frame" data-touch="${touch}" style="aspect-ratio: ${pair.before.width} / ${pair.before.height}; --pos:${start}%">
-            <img src="${esc(pair.before.src)}" alt="${esc(pair.before.alt)}" width="${pair.before.width}" height="${pair.before.height}" loading="lazy" decoding="async" draggable="false" class="ba-img">
-            <img src="${esc(pair.after.src)}" alt="${esc(pair.after.alt)}" width="${pair.after.width}" height="${pair.after.height}" loading="lazy" decoding="async" draggable="false" class="ba-img ba-after">
-            <span class="ba-tag ba-tag-after" aria-hidden="true">После</span>
-            <span class="ba-tag ba-tag-before" aria-hidden="true">До</span>
-            <div class="ba-line" aria-hidden="true"></div>
-            ${touch ? `<span class="ba-hint" aria-hidden="true">${icon("chevrons-left-right", "size-3.5")} Тяните</span>` : ""}
-            <div class="ba-handle" role="slider" tabindex="0" aria-label="Сравнение до и после: ${esc(pair.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${start}" aria-valuetext="После: ${start}%" data-ba-handle="${esc(pair.key)}">${icon("chevrons-left-right", "size-4")}</div>
-          </div>
-          <figcaption class="mt-4">
-            <span class="block font-semibold text-ink">${esc(pair.title)}</span>
-            <span class="mt-1 block text-sm leading-relaxed text-chrome">${esc(pair.caption)}</span>
-          </figcaption>
-        </figure>`;
-      })
-      .join("");
-    return `<section id="before-after" aria-labelledby="before-after-title" class="section">
-      <div class="container-x">
-        ${heading({ ...d, id: "before-after-title" })}
-        <div class="ba-grid mt-10">${cards}</div>
+    const start = touch ? 50 : 0;
+    return `<figure class="${cardClass}" data-ba="${esc(pair.key)}">
+      <div class="ba-frame" data-touch="${touch}" style="aspect-ratio: ${pair.before.width} / ${pair.before.height}; --pos:${start}%">
+        <img src="${esc(pair.before.src)}" alt="${esc(pair.before.alt)}" width="${pair.before.width}" height="${pair.before.height}" loading="lazy" decoding="async" draggable="false" class="ba-img">
+        <img src="${esc(pair.after.src)}" alt="${esc(pair.after.alt)}" width="${pair.after.width}" height="${pair.after.height}" loading="lazy" decoding="async" draggable="false" class="ba-img ba-after">
+        <span class="ba-tag ba-tag-after" aria-hidden="true">После</span>
+        <span class="ba-tag ba-tag-before" aria-hidden="true">До</span>
+        <div class="ba-line" aria-hidden="true"></div>
+        ${touch ? `<span class="ba-hint" aria-hidden="true">${icon("chevrons-left-right", "size-3.5")} Тяните</span>` : ""}
+        <div class="ba-handle" role="slider" tabindex="0" aria-label="Сравнение до и после: ${esc(pair.title)}" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${start}" aria-valuetext="После: ${start}%" data-ba-handle="${esc(pair.key)}">${icon("chevrons-left-right", "size-4")}</div>
       </div>
-    </section>`;
+    </figure>`;
   }
 
   function stars(count, label, className = "size-4") {
@@ -875,7 +874,6 @@
         }
         ${textStrip(site.strips.services, "amber")}
         ${site.services.length ? renderServices() : ""}
-        ${renderBeforeAfter()}
         ${textStrip(site.strips.brand)}
         ${renderReviews()}
         ${renderRequest()}
@@ -893,6 +891,7 @@
     next.innerHTML = renderServices();
     root.replaceWith(next.firstElementChild);
     bindServices();
+    bindBeforeAfter();
   }
 
   function refreshBooking() {
