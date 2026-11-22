@@ -276,6 +276,7 @@
         <div class="glass header-bar flex items-center justify-between gap-4 rounded-full py-2 pl-3 pr-2 shadow-[0_10px_40px_-20px_rgba(0,0,0,0.8)]">
           <a href="#hero" class="brand-lockup" aria-label="${esc(site.brand.name)} — на главную">
             ${brandMark()}
+            <span class="brand-name">${esc(site.brand.name)}</span>
           </a>
           <nav aria-label="Разделы" class="header-nav hidden lg:block">
             <ul class="m-0 flex list-none gap-1 p-0">${links}</ul>
