@@ -216,39 +216,48 @@
       `--chars-line:${words.join(" ").length}`,
       `--chars-word:${Math.max(...words.map((wrd) => wrd.length))}`,
       `--lines:${words.length}`,
-      `--ct-n:${n.carTop}`,
+      n.carTop != null ? `--ct-n:${n.carTop}` : null,
       `--fill:${cssUrl(n.bg)}`,
-    ].join(";");
+    ]
+      .filter(Boolean)
+      .join(";");
     return { style, fit };
   }
 
   function renderHero() {
     const { narrow: n, wide: w } = site.hero;
     const { style, fit } = heroCSSVars();
-    const words = site.brand.heroWords
-      .map((word, i) => `${i > 0 ? " " : ""}<span class="hero-word">${esc(word)}</span>`)
-      .join("");
+    const markWebp = site.brand.logoMark || "./brand/logo-flat-v9-mark.webp";
+    const markPng = site.brand.logoMarkPng || "./brand/logo-flat-v9-mark.png";
+    const wordmark = site.brand.heroWordmark || "DETAILING";
+    const hasCarLayer = Boolean(n.car && w.car);
     const wideBg = `(min-width: 2000px), (min-width: 1300px) and (min-resolution: 1.5dppx)`;
-    return `<section id="hero" aria-labelledby="hero-title" class="hero relative overflow-hidden bg-obsidian" data-cutout="true" data-fit="${fit}" style="${style}">
+    const carLayer = hasCarLayer
+      ? `<picture>
+          <source media="${wideBg}" srcset="${esc(w.car4k || w.car)}">
+          <source media="(min-width: 768px)" srcset="${esc(w.car)}">
+          <img src="${esc(n.car)}" alt="${esc(n.alt)}" width="${n.width}" height="${n.height}" loading="eager" decoding="sync" class="hero-layer hero-car">
+        </picture>`
+      : "";
+    return `<section id="hero" aria-labelledby="hero-title" class="hero relative overflow-hidden bg-obsidian" data-cutout="${hasCarLayer ? "true" : "false"}" data-fit="${fit}" style="${style}">
       <div aria-hidden="true" class="hero-fill"></div>
       <div class="hero-frame">
         <picture>
-          <source media="${wideBg}" srcset="${esc(w.bg4k)}">
+          <source media="${wideBg}" srcset="${esc(w.bg4k || w.bg)}">
           <source media="(min-width: 768px)" srcset="${esc(w.bg)}">
-          <img src="${esc(n.bg)}" alt="" aria-hidden="true" width="${n.width}" height="${n.height}" loading="eager" decoding="sync" class="hero-layer">
+          <img src="${esc(n.bg)}" alt="${esc(n.alt || "")}" aria-hidden="${n.alt ? "false" : "true"}" width="${n.width}" height="${n.height}" loading="eager" decoding="sync" class="hero-layer">
         </picture>
-        <picture>
-          <source media="${wideBg}" srcset="${esc(w.car4k)}">
-          <source media="(min-width: 768px)" srcset="${esc(w.car)}">
-          <img src="${esc(n.car)}" alt="${esc(n.alt)}" width="${n.width}" height="${n.height}" loading="eager" decoding="sync" class="hero-layer hero-car">
-        </picture>
+        ${carLayer}
       </div>
       <div class="hero-brand">
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
-        <picture class="hero-logo-wrap">
-          <source type="image/webp" srcset="${esc(site.brand.logoHero || "./brand/logo-flat-v9.webp")}">
-          <img class="hero-logo" src="${esc(site.brand.logoHeroPng || "./brand/logo-flat-v9.png")}" alt="" width="806" height="562" decoding="sync" fetchpriority="high" aria-hidden="true">
-        </picture>
+        <div class="hero-lockup" aria-hidden="true">
+          <picture class="hero-mark-wrap">
+            <source type="image/webp" srcset="${esc(markWebp)}">
+            <img class="hero-mark" src="${esc(markPng)}" alt="" width="320" height="223" decoding="sync" fetchpriority="high">
+          </picture>
+          <p class="hero-wordmark">${esc(wordmark)}</p>
+        </div>
         <p class="hero-kicker">${esc(site.brand.kicker)}</p>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
