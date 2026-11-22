@@ -24,6 +24,7 @@
   let activePopupFile = "";
   let lastFocus = null;
   let popupLoad = 0;
+  const docCache = Object.create(null);
 
   function esc(value) {
     return String(value ?? "")
@@ -271,9 +272,7 @@
           <button type="button" class="legal-modal-close" data-legal-modal-close aria-label="Закрыть">×</button>
         </div>
         <div class="legal-modal-switch" data-legal-modal-switch></div>
-        <div class="legal-modal-body legal-doc" data-legal-modal-body>
-          <p class="legal-modal-status">Загрузка…</p>
-        </div>
+        <div class="legal-modal-body legal-doc" data-legal-modal-body></div>
       </div>
     </div>`;
   }
@@ -294,7 +293,45 @@
   function setModalStatus(text, isError) {
     const body = document.querySelector("[data-legal-modal-body]");
     if (!body) return;
+    body.classList.remove("legal-modal-body--pending");
     body.innerHTML = `<p class="legal-modal-status${isError ? " legal-modal-status--error" : ""}">${esc(text)}</p>`;
+  }
+
+  function articleFromHtml(html) {
+    const parsed = new DOMParser().parseFromString(html, "text/html");
+    const article = parsed.querySelector("article.legal-doc");
+    if (!article) throw new Error("no-article");
+    const h1 = article.querySelector("h1");
+    const title = h1 && h1.textContent.trim() ? h1.textContent.trim() : "";
+    const clone = article.cloneNode(true);
+    clone.querySelector(".legal-kicker")?.remove();
+    clone.querySelector(".legal-switch")?.remove();
+    clone.querySelector("h1")?.remove();
+    return { title: title, bodyHtml: clone.innerHTML };
+  }
+
+  async function fetchDocEntry(file) {
+    if (docCache[file]) return docCache[file];
+    const res = await fetch(docUrl(file), { credentials: "same-origin" });
+    if (!res.ok) throw new Error("http-" + res.status);
+    const entry = articleFromHtml(await res.text());
+    docCache[file] = entry;
+    return entry;
+  }
+
+  function applyDocToModal(entry, bodyEl, titleEl) {
+    if (titleEl && entry.title) titleEl.textContent = entry.title;
+    if (!bodyEl) return;
+    bodyEl.classList.remove("legal-modal-body--pending");
+    bodyEl.innerHTML = entry.bodyHtml;
+    bodyEl.classList.add("legal-doc");
+    fill(bodyEl);
+  }
+
+  function prefetchLegalDocs() {
+    DOCS.forEach(function (item) {
+      fetchDocEntry(item[0]).catch(function () {});
+    });
   }
 
   function closeLegalPopup() {
@@ -326,8 +363,6 @@
     lastFocus = document.activeElement;
     activePopupFile = file;
     const loadId = ++popupLoad;
-    modal.hidden = false;
-    document.documentElement.classList.add("legal-modal-open");
 
     const titleEl = document.getElementById("legal-modal-title");
     const switchEl = document.querySelector("[data-legal-modal-switch]");
@@ -335,34 +370,26 @@
     const docMeta = DOCS.find((d) => d[0] === file);
     if (titleEl && docMeta) titleEl.textContent = docMeta[1];
     if (switchEl) switchEl.innerHTML = modalSwitchHtml(file);
-    if (bodyEl) setModalStatus("Загрузка…");
+
+    modal.hidden = false;
+    document.documentElement.classList.add("legal-modal-open");
+
+    const cached = docCache[file];
+    if (cached) {
+      applyDocToModal(cached, bodyEl, titleEl);
+    } else if (bodyEl) {
+      bodyEl.classList.add("legal-modal-body--pending");
+      bodyEl.innerHTML = "";
+      bodyEl.classList.remove("legal-doc");
+    }
 
     const closeBtn = modal.querySelector(".legal-modal-close");
     if (closeBtn) closeBtn.focus();
 
     try {
-      const res = await fetch(docUrl(file), { credentials: "same-origin" });
+      const entry = await fetchDocEntry(file);
       if (loadId !== popupLoad) return;
-      if (!res.ok) throw new Error("http-" + res.status);
-      const html = await res.text();
-      if (loadId !== popupLoad) return;
-      const parsed = new DOMParser().parseFromString(html, "text/html");
-      const article = parsed.querySelector("article.legal-doc");
-      if (!article) throw new Error("no-article");
-
-      const h1 = article.querySelector("h1");
-      if (titleEl && h1 && h1.textContent.trim()) titleEl.textContent = h1.textContent.trim();
-
-      const clone = article.cloneNode(true);
-      clone.querySelector(".legal-kicker")?.remove();
-      clone.querySelector(".legal-switch")?.remove();
-      clone.querySelector("h1")?.remove();
-
-      if (bodyEl) {
-        bodyEl.innerHTML = clone.innerHTML;
-        bodyEl.classList.add("legal-doc");
-        fill(bodyEl);
-      }
+      applyDocToModal(entry, bodyEl, titleEl);
     } catch (err) {
       if (loadId !== popupLoad) return;
       setModalStatus("Не удалось загрузить документ. Попробуйте ещё раз или откройте страницу позже.", true);
@@ -479,6 +506,7 @@
   function bootAll() {
     ensureModal();
     bindLegalPopups();
+    prefetchLegalDocs();
     bootLegalPage();
   }
 
