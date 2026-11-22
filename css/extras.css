@@ -903,8 +903,29 @@ html {
   color: #e8e8e8;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
 }
+#hero::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.68) 0%,
+    rgba(0, 0, 0, 0.42) 26%,
+    rgba(0, 0, 0, 0.18) 48%,
+    rgba(0, 0, 0, 0.06) 72%,
+    rgba(0, 0, 0, 0.02) 100%
+  );
+}
 #hero .hero-fade {
-  opacity: 0.92;
+  opacity: 0.88;
+  background: linear-gradient(
+    180deg,
+    transparent 0%,
+    rgba(0, 0, 0, 0.08) 55%,
+    rgba(0, 0, 0, 0.35) 100%
+  ) !important;
 }
 @media (max-width: 767px) {
   .hero-brand {
