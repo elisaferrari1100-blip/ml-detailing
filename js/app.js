@@ -238,9 +238,12 @@
   function renderHero() {
     const { narrow: n, wide: w } = site.hero;
     const { style, fit } = heroCSSVars();
-    const markWebp = site.brand.logoMark || "./brand/logo-flat-v9-mark.webp";
-    const markPng = site.brand.logoMarkPng || "./brand/logo-flat-v9-mark.png";
-    const wordmark = site.brand.heroWordmark || "DETAILING";
+    const letters = Array.isArray(site.brand.nameLetters)
+      ? site.brand.nameLetters
+      : String(site.brand.short || site.brand.name || "ML").split("");
+    const heroLetters = letters
+      .map((ch) => `<span class="hero-brand-letter">${esc(ch)}</span>`)
+      .join("");
     const hasCarLayer = Boolean(n.car && w.car);
     const wideBg = `(min-width: 2000px), (min-width: 1300px) and (min-resolution: 1.5dppx)`;
     const carLayer = hasCarLayer
@@ -262,14 +265,7 @@
       </div>
       <div class="hero-brand">
         <h1 id="hero-title" class="sr-only">ML Detailing</h1>
-        <div class="hero-lockup" aria-hidden="true">
-          <picture class="hero-mark-wrap">
-            <source type="image/webp" srcset="${esc(markWebp)}">
-            <img class="hero-mark" src="${esc(markPng)}" alt="" width="320" height="223" decoding="sync" fetchpriority="high">
-          </picture>
-          <p class="hero-wordmark">${esc(wordmark)}</p>
-        </div>
-        <p class="hero-kicker">${esc(site.brand.kicker)}</p>
+        <div class="hero-lockup brand-lockup hero-brand-lockup" aria-hidden="true">${heroLetters}</div>
       </div>
       <div aria-hidden="true" class="hero-fade"></div>
       <a href="#works" data-smooth-scroll aria-label="Прокрутить к работам" class="hero-scroll-arrow absolute bottom-6 left-1/2 z-10 -translate-x-1/2">
