@@ -839,3 +839,117 @@ html {
     padding: 1.15rem 1.25rem;
   }
 }
+
+/* ——— Цены ——— */
+#request .req-layout {
+  display: grid;
+  gap: 1.5rem;
+  margin-top: 0.5rem;
+}
+@media (min-width: 1024px) {
+  #request .req-layout {
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+    gap: 2rem;
+    align-items: start;
+  }
+}
+#request .req-aside {
+  min-width: 0;
+}
+#request .req-aside-head {
+  margin-bottom: 1.25rem;
+}
+@media (min-width: 1024px) {
+  #request .req-aside-head .display {
+    font-size: clamp(22px, 2.6vw, 36px);
+  }
+}
+#request .req-group + .req-group {
+  margin-top: 1.35rem;
+}
+#request .req-group-title {
+  margin: 0 0 0.5rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--color-chrome);
+}
+#request .req-group-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+#request .req-form-slot {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+#request .req-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+#request .req-form-intro {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--color-chrome);
+}
+#request .req-form-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+#request .req-form-services {
+  padding: 0.85rem 1rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(255, 255, 255, 0.03);
+}
+#request .req-form-services-label {
+  margin: 0 0 0.5rem;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--color-chrome);
+}
+#request .req-form-services-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  font-size: 13px;
+}
+#request .req-form-services-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+#request .req-form-services-name {
+  color: var(--color-ink);
+}
+#request .req-form-services-price {
+  color: var(--color-chrome);
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+#request .req-form-services-empty {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--color-chrome);
+}
+#request .req-form-done .req-form-followup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  margin-top: 1rem;
+}
+#request .req-form-done .req-form-followup .btn {
+  width: 100%;
+  justify-content: center;
+}

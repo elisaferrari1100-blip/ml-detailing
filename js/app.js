@@ -4,7 +4,7 @@
 
   const ALL = "Все";
   const priceMap = new Map(site.priceList.map((item) => [item.key, item]));
-  const groups = [...new Set(site.priceList.map((item) => item.group))];
+  const groups = site.priceGroupOrder || [...new Set(site.priceList.map((item) => item.group))];
 
   const state = {
     selected: [],
@@ -16,6 +16,7 @@
     formTried: false,
     formSending: false,
     formDone: false,
+    formSentRemote: false,
     reviewOpen: {},
     mapUnlocked: false,
     baTouched: {},
@@ -675,8 +676,9 @@
     return errors;
   }
 
-  function renderPriceRow(item) {
+  function renderPriceRow(item, opts = {}) {
     const selected = booking().isSelected(item.key);
+    const hideGroup = opts.hideGroup === true;
     const price =
       item.price === undefined
         ? `<span class="req-price req-price-none">по запросу</span>`
@@ -685,7 +687,7 @@
       <span class="req-check" aria-hidden="true">${icon("check", "size-3.5")}</span>
       <span class="req-text">
         <span class="req-title">${esc(item.title)}</span>
-        <span class="req-tag">${esc(item.group)}</span>
+        ${hideGroup ? "" : `<span class="req-tag">${esc(item.group)}</span>`}
         ${item.note ? `<span class="req-note">${esc(item.note)}</span>` : ""}
       </span>
       ${price}
@@ -746,21 +748,50 @@
     </div>`;
   }
 
+  function renderFormServicesSummary() {
+    const b = booking();
+    if (!b.items.length) {
+      return `<p class="req-form-services-empty">Услуги не выбраны — можно отправить заявку без списка, мы уточним детали по телефону.</p>`;
+    }
+    return `<div class="req-form-services">
+      <p class="req-form-services-label">Выбранные услуги</p>
+      <ul class="req-form-services-list">${b.items
+        .map(
+          (item) =>
+            `<li><span class="req-form-services-name">${esc(item.title)}</span><span class="req-form-services-price">от ${formatPrice(item.price)}</span></li>`
+        )
+        .join("")}</ul>
+    </div>`;
+  }
+
   function renderForm() {
+    const phone = site.contacts.phone;
+    const phoneHref = `tel:+${digitsFromPhone(phone)}`;
+    const vkUrl = site.social?.vk?.url || "";
     if (state.formDone) {
-      return `<div id="lead-form-wrap" role="status" class="p-1 pt-5">
+      const followUp = state.formSentRemote
+        ? `<p class="mt-3 text-ink/90">Мы получили заявку и перезвоним, чтобы подтвердить время и итоговую стоимость.</p>`
+        : `<p class="mt-3 text-ink/90">Автоотправка с сайта пока не подключена. Позвоните или напишите в VK — передайте те же данные, и мы запишем вас.</p>
+          <div class="req-form-followup">
+            <a class="btn btn-primary" href="${esc(phoneHref)}">Позвонить: ${esc(phone)}</a>
+            ${vkUrl ? `<a class="btn btn-glass" href="${esc(vkUrl)}" target="_blank" rel="noopener noreferrer">Написать ВКонтакте</a>` : ""}
+          </div>`;
+      return `<div id="lead-form-wrap" role="status" class="req-form-done">
         ${icon("circle-check", "size-10 text-amber")}
-        <h3 class="display mt-4 text-xl font-semibold text-ink">Заявка принята</h3>
-        <p class="mt-3 text-ink/90">Мы перезвоним, чтобы подтвердить время.</p>
-        <p class="mt-2 text-[13px] leading-relaxed text-chrome">Данные пока никуда не отправляются: форма работает в демонстрационном режиме.</p>
+        <h3 class="display mt-4 text-xl font-semibold text-ink">Спасибо!</h3>
+        ${followUp}
         ${btn({ variant: "glass", className: "mt-6", attrs: "data-reset-form", children: "Отправить ещё одну" })}
       </div>`;
     }
     const consentErr = state.formTried && !state.form.consent;
-    return `<form id="lead-form-wrap" novalidate class="flex flex-col gap-4 p-1 pt-5">
-      ${field("lead-name", "name", "Ваше имя", false, 'type="text" autocomplete="name" data-field="name"')}
-      ${field("lead-phone", "phone", "Телефон", false, 'type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" data-field="phone"')}
-      ${field("lead-car", "car", "Марка и модель авто", true, 'type="text" placeholder="Например, Mazda 6" data-field="car"')}
+    return `<form id="lead-form-wrap" novalidate class="req-form">
+      <p class="req-form-intro">Оставьте контакты — передадим мастеру выбранные услуги и смету «от».</p>
+      ${renderFormServicesSummary()}
+      <div class="req-form-fields">
+        ${field("lead-name", "name", "Ваше имя", false, 'type="text" autocomplete="name" data-field="name"')}
+        ${field("lead-phone", "phone", "Телефон", false, 'type="tel" inputmode="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__" data-field="phone"')}
+        ${field("lead-car", "car", "Марка и модель авто", true, 'type="text" placeholder="Например, Mazda 6" data-field="car"')}
+      </div>
       <div>
         <label class="consent">
           <input type="checkbox" id="lead-consent" name="consent" data-field="consent" ${state.form.consent ? "checked" : ""}>
@@ -805,27 +836,44 @@
         <p class="mt-3 text-[11px] leading-relaxed text-chrome">* ${esc(site.sections.request.totalNote)}${b.hasOnRequest ? "; позиции «по запросу» мастер оценит на осмотре" : ""}</p>
       </div>
       <button type="button" data-go-form class="req-cta mt-6">Оформить заявку${icon("arrow-right", "size-4")}</button>
-      <div id="lead-form-slot">${renderForm()}</div>
+      <div id="lead-form-slot" class="req-form-slot">${renderForm()}</div>
     </aside>`;
   }
 
   function renderRequestList() {
-    const items = state.category === ALL ? site.priceList : site.priceList.filter((i) => i.group === state.category);
-    return items.map(renderPriceRow).join("");
+    const categories =
+      state.category === ALL
+        ? groups.filter((g) => site.priceList.some((item) => item.group === g))
+        : [state.category];
+    return categories
+      .map((group) => {
+        const items = site.priceList.filter((item) => item.group === group);
+        if (!items.length) return "";
+        const slug = group.replace(/\s+/g, "-").toLowerCase();
+        return `<section class="req-group" aria-labelledby="req-gr-${slug}">
+          <h3 class="req-group-title" id="req-gr-${slug}">${esc(group)}</h3>
+          <div class="req-group-rows">${items.map((item) => renderPriceRow(item, { hideGroup: true })).join("")}</div>
+        </section>`;
+      })
+      .join("");
   }
 
   function renderRequest() {
     return `<section id="request" aria-labelledby="request-title" class="section relative isolate">
       ${backdrop("studio-car", 0.5)}
       <div class="container-x">
-        ${heading({ ...site.sections.request, id: "request-title" })}
-        <div class="mt-10">${renderPills()}</div>
-        <div class="req-layout mt-5">
+        <div class="req-layout">
           <div class="req-split">
-            <div class="req-list min-w-0" id="req-list">${renderRequestList()}</div>
+            <div class="req-pricelist min-w-0">
+              <div class="mt-2 lg:mt-0">${renderPills()}</div>
+              <div class="req-list min-w-0" id="req-list">${renderRequestList()}</div>
+            </div>
             ${renderMini()}
           </div>
-          ${renderPanel()}
+          <div class="req-aside">
+            ${heading({ ...site.sections.request, id: "request-title", className: "req-aside-head max-w-none", leadClass: "mt-3 text-sm md:text-base" })}
+            ${renderPanel()}
+          </div>
         </div>
       </div>
     </section>`;
@@ -1381,7 +1429,7 @@
       refreshForm();
       const b = booking();
       try {
-        await site.submitLead({
+        const result = await site.submitLead({
           name: state.form.name,
           phone: state.form.phone,
           car: state.form.car,
@@ -1390,6 +1438,7 @@
           hasOnRequest: b.hasOnRequest,
         });
         state.formSending = false;
+        state.formSentRemote = !!(result && result.sent);
         state.formDone = true;
         refreshForm();
       } catch (err) {
@@ -1498,6 +1547,7 @@
         state.formTried = false;
         state.formSending = false;
         state.formDone = false;
+        state.formSentRemote = false;
         clearItems();
         refreshForm();
         return;
