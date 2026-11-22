@@ -28,6 +28,7 @@ window.ML_SITE = {
     logoHero: "./brand/logo-flat-v9.webp",
     logoHeroPng: "./brand/logo-flat-v9.png",
     logoMarkPng: "./brand/logo-flat-v9-mark.png",
+    monogramLetters: ["M", "L"],
     ogImage: "./brand/og-1200x630.png",
   },
 
