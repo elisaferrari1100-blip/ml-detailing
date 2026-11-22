@@ -253,7 +253,7 @@ window.ML_SITE = {
       title: "Антихром",
       description: "Закрываем хром чёрной плёнкой: молдинги, решётка, окантовка стёкол. Плёнку можно снять — родной хром остаётся под ней.",
       priceItem: "styling-x0",
-      price: "от 1\u00a0000\u00a0₽",
+      price: "от 2\u00a0000\u00a0₽",
       image: { src: "./images/services/styling.webp", srcSmall: "./images/services/styling-800.webp", alt: "Антихром — работа студии ML", width: 1024, height: 1280 },
     },
     {
