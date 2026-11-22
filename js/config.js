@@ -84,7 +84,7 @@ window.ML_SITE = {
       bg: "./images/hero/narrow-bg.webp",
       width: 720,
       height: 720,
-      alt: "Zeekr 007 в студии ML",
+      alt: "Porsche Panamera GTS в студии ML",
       focusX: 0.5,
       focusY: 0.5,
       textTop: 0.2,
