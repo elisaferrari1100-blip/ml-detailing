@@ -122,6 +122,18 @@
     }).join("");
   }
 
+  function footerDocsHtml(prefix) {
+    const here = currentFile();
+    return DOCS.map(function (item) {
+      const file = item[0];
+      const label = item[1];
+      const short = item[2] || label;
+      const current = here === file ? ' aria-current="page"' : "";
+      const title = short === label ? "" : ` title="${esc(label)}"`;
+      return `<li><a class="footer-doc-link" href="${prefix}${file}" data-legal-popup${current}${title}>${esc(short)}</a></li>`;
+    }).join("");
+  }
+
   function modalSwitchHtml(activeFile) {
     return DOCS.map(function (item) {
       const file = item[0];
@@ -160,30 +172,31 @@
     });
   }
 
+  function compactReqChip(label, html) {
+    return `<span class="legal-chip"><span class="legal-chip-k">${esc(label)}</span><span class="legal-chip-v">${html}</span></span>`;
+  }
+
   function barHtml(opts) {
     const prefix = (opts && opts.prefix) || "./legal/";
     const year = new Date().getFullYear();
     const studio = (site.contacts && site.contacts.studioName) || "ML";
     const city = (site.brand && site.brand.city) || "Нижний Новгород";
-    const address = (site.contacts && site.contacts.address) || "";
+    const chips = [
+      compactReqChip("Исполнитель", fieldHtml("legalName")),
+      compactReqChip("ИНН", fieldHtml("inn")),
+      !isPlaceholder(FIELDS.ogrn) ? compactReqChip("ОГРН/ОГРНИП", fieldHtml("ogrn")) : "",
+      !isPlaceholder(FIELDS.email) ? compactReqChip("E-mail", fieldHtml("email")) : "",
+      compactReqChip("Телефон", fieldHtml("phone")),
+    ]
+      .filter(Boolean)
+      .join("");
     return `<section class="legal-bar" id="legal-bar" aria-label="Юридическая информация">
       <div class="container-x legal-bar-inner">
-        <p class="legal-bar-copy">© ${year} ${esc(studio)} · ${esc(city)}</p>
-        <div class="legal-bar-details">
-          <p class="legal-bar-kicker">Реквизиты</p>
-          <ul class="legal-req">
-            ${reqItem("Исполнитель", fieldHtml("legalName"))}
-            ${reqItem("ИНН", fieldHtml("inn"))}
-            ${reqItemIf("ogrn", "ОГРН/ОГРНИП")}
-            ${reqItemIf("email", "E-mail")}
-            ${reqItem("Телефон", fieldHtml("phone"))}
-            ${address ? reqItem("Адрес", esc(address)) : ""}
-          </ul>
+        <div class="legal-bar-foot">
+          <p class="legal-bar-copy">© ${year} ${esc(studio)} · ${esc(city)}</p>
+          <div class="legal-req-compact" role="list">${chips}</div>
+          <p class="legal-bar-offer"><a href="${prefix}offer.html" data-legal-popup>Цены не являются публичной офертой</a></p>
         </div>
-        <nav class="legal-bar-nav" aria-label="Документы">
-          <ul class="legal-docs">${docsHtml(prefix)}</ul>
-        </nav>
-        <p class="legal-bar-offer"><a href="${prefix}offer.html" data-legal-popup>Цены не являются публичной офертой</a></p>
       </div>
     </section>`;
   }
@@ -384,6 +397,7 @@
   window.ML_LEGAL = {
     fields: FIELDS,
     barHtml: barHtml,
+    footerDocsHtml: footerDocsHtml,
     cookieHtml: cookieHtml,
     fill: fill,
     bindCookie: bindCookie,
