@@ -903,14 +903,6 @@ html {
   color: #e8e8e8;
   text-shadow: 0 2px 16px rgba(0, 0, 0, 0.7);
 }
-#hero::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 4;
-  pointer-events: none;
-  background: rgba(0, 0, 0, 0.2);
-}
 #hero .hero-fade {
   opacity: 0.92;
 }
