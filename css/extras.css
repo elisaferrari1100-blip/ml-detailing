@@ -1037,19 +1037,19 @@ html {
   }
 }
 #request .req-group + .req-group {
-  margin-top: 0.65rem;
+  margin-top: 0.85rem;
 }
 #request .req-group {
-  border-radius: 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(255, 255, 255, 0.02);
-  overflow: hidden;
+  border: none;
+  border-radius: 0;
+  background: transparent;
+  overflow: visible;
 }
 #request .req-group-heading {
   margin: 0;
 }
 #request .req-group-heading--plain {
-  padding: 0.85rem 1rem 0.35rem;
+  padding: 0.35rem 0.15rem 0.15rem;
 }
 #request .req-group-toggle {
   width: 100%;
@@ -1058,15 +1058,15 @@ html {
   justify-content: space-between;
   gap: 12px;
   margin: 0;
-  padding: 0.9rem 1rem;
+  padding: 0.35rem 0.15rem;
   border: 0;
   background: transparent;
   cursor: pointer;
   text-align: left;
   color: inherit;
 }
-#request .req-group-toggle:hover {
-  background: rgba(255, 255, 255, 0.04);
+#request .req-group-toggle:hover .req-group-title-text {
+  color: color-mix(in srgb, var(--color-ink) 92%, var(--color-amber));
 }
 #request .req-group-title-text {
   font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
@@ -1090,8 +1090,9 @@ html {
 #request .req-group-rows {
   display: flex;
   flex-direction: column;
-  gap: 0.45rem;
-  padding: 0 0.5rem 0.65rem;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 0.85rem 0 0.15rem;
 }
 #request .req-group-rows[hidden] {
   display: none;
