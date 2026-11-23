@@ -1,3 +1,6 @@
 .DS_Store
 ._*
 tools/__pycache__/
+workers/lead-handler/node_modules/
+workers/lead-handler/.dev.vars
+workers/lead-handler/.wrangler/

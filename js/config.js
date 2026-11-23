@@ -471,20 +471,25 @@ window.ML_SITE = {
   ],
 
   /**
-   * Отправка заявок. Укажите `endpoint` (URL обработчика), чтобы включить POST в сеть.
-   * Пустая строка — заявка обрабатывается только на странице (без запроса на сервер).
+   * Отправка заявок через Cloudflare Worker (Telegram + почта).
+   * Настройка: workers/lead-handler/НАСТРОЙКА.md и tools/set-lead-endpoint.py
+   * Пустой endpoint — форма покажет телефон/VK без сетевой отправки.
    * payload: { name, phone, car, items, total, hasOnRequest }
    */
   leads: {
     endpoint: "",
+    clientKey: "",
   },
 
   async submitLead(payload) {
     const endpoint = (this.leads?.endpoint || "").trim();
     if (endpoint) {
+      const headers = { "Content-Type": "application/json", Accept: "application/json" };
+      const clientKey = (this.leads?.clientKey || "").trim();
+      if (clientKey) headers["X-Lead-Key"] = clientKey;
       const res = await fetch(endpoint, {
         method: "POST",
-        headers: { "Content-Type": "application/json", Accept: "application/json" },
+        headers,
         body: JSON.stringify(payload),
       });
       if (!res.ok) {

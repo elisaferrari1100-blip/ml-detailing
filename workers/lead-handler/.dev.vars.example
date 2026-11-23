@@ -1,0 +1,6 @@
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+RESEND_API_KEY=
+LEAD_EMAIL_TO=
+LEAD_EMAIL_FROM=ML Detailing <onboarding@resend.dev>
+LEAD_CLIENT_KEY=dev-test-key-change-me
