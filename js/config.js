@@ -82,8 +82,8 @@ window.ML_SITE = {
   hero: {
     narrow: {
       bg: "./images/hero/narrow-bg.webp",
-      width: 720,
-      height: 720,
+      width: 900,
+      height: 900,
       alt: "Porsche Panamera GTS в студии ML",
       focusX: 0.5,
       focusY: 0.5,
@@ -92,8 +92,8 @@ window.ML_SITE = {
     },
     wide: {
       bg: "./images/hero/wide-bg.webp",
-      width: 1920,
-      height: 1920,
+      width: 1086,
+      height: 1086,
       focusX: 0.5,
       focusY: 0.48,
       textTop: 0.18,
