@@ -804,9 +804,7 @@
 
   function renderFormServicesSummary() {
     const b = booking();
-    if (!b.items.length) {
-      return `<p class="req-form-services-empty">Услуги не выбраны — можно отправить заявку без списка, мы уточним детали по телефону.</p>`;
-    }
+    if (!b.items.length) return "";
     return `<div class="req-form-services">
       <p class="req-form-services-label">Выбранные услуги</p>
       <ul class="req-form-services-list">${b.items
@@ -839,7 +837,6 @@
     }
     const consentErr = state.formTried && !state.form.consent;
     return `<form id="lead-form-wrap" novalidate class="req-form">
-      <p class="req-form-intro">Оставьте контакты — передадим мастеру выбранные услуги и смету «от».</p>
       ${renderFormServicesSummary()}
       <div class="req-form-fields">
         ${field("lead-name", "name", "Ваше имя", false, 'type="text" autocomplete="name" data-field="name"')}
@@ -864,8 +861,19 @@
     </form>`;
   }
 
+  function renderPriceStandardNote() {
+    return `<div class="req-standard flex gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
+      ${icon("shield-check", "mt-0.5 size-5 shrink-0 text-amber")}
+      <p class="text-[13px] leading-relaxed text-chrome">
+        <span class="block font-semibold text-ink">${esc(site.sections.request.standard.title)}</span>
+        ${esc(site.sections.request.standard.text)}
+      </p>
+    </div>`;
+  }
+
   function renderPanel() {
     const b = booking();
+    const totalLine = b.total > 0 ? `от ${formatPrice(b.total)}` : "—";
     return `<aside aria-label="Смета работ" class="req-panel glass p-6 lg:sticky lg:top-24" id="req-panel">
       <div class="flex items-center justify-between gap-3">
         <h3 class="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-chrome">
@@ -874,22 +882,14 @@
         <span class="glass rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-chrome">${esc(site.brand.short)}</span>
       </div>
       <div id="req-selected">${renderSelectedList()}</div>
-      <div class="mt-6 flex gap-3 rounded-2xl border border-white/[0.08] bg-white/[0.03] p-4">
-        ${icon("shield-check", "mt-0.5 size-5 shrink-0 text-amber")}
-        <p class="text-[13px] leading-relaxed text-chrome">
-          <span class="block font-semibold text-ink">${esc(site.sections.request.standard.title)}</span>
-          ${esc(site.sections.request.standard.text)}
-        </p>
-      </div>
       <div class="mt-6 border-t border-white/10 pt-5">
         <p class="eyebrow !text-chrome">Расчётная стоимость</p>
-        <p class="mt-3 flex items-baseline justify-end gap-2.5">
-          ${b.total > 0 ? `<span class="text-sm text-chrome">от</span>` : ""}
-          <span class="req-total">${b.total > 0 ? formatPrice(b.total) : "—"}</span>
+        <p class="mt-3 req-total-line flex items-baseline justify-end">
+          <span class="req-total">${totalLine}</span>
         </p>
-        <p class="mt-3 text-[11px] leading-relaxed text-chrome">* ${esc(site.sections.request.totalNote)}${b.hasOnRequest ? "; позиции «по запросу» мастер оценит на осмотре" : ""}</p>
       </div>
       <button type="button" data-go-form class="req-cta mt-6">Оформить заявку${icon("arrow-right", "size-4")}</button>
+      <div class="req-standard-wrap mt-6">${renderPriceStandardNote()}</div>
       <div id="lead-form-slot" class="req-form-slot">${renderForm()}</div>
     </aside>`;
   }
@@ -1115,21 +1115,9 @@
     if (selected) selected.innerHTML = renderSelectedList();
     const panel = document.getElementById("req-panel");
     if (panel) {
-      const totalEl = panel.querySelector(".req-total");
+      const totalEl = panel.querySelector(".req-total-line .req-total");
       const b = booking();
-      if (totalEl) totalEl.textContent = b.total > 0 ? formatPrice(b.total) : "—";
-      const from = panel.querySelector(".mt-3.flex.items-baseline");
-      if (from) {
-        from.innerHTML = `${b.total > 0 ? `<span class="text-sm text-chrome">от</span>` : ""}<span class="req-total">${b.total > 0 ? formatPrice(b.total) : "—"}</span>`;
-      }
-      const note = panel.querySelector(".mt-3.text-\\[11px\\], p.mt-3.text-\\[11px\\]");
-      const noteEl = panel.querySelectorAll("p")[panel.querySelectorAll("p").length - 1];
-      // safer: find the asterisk note
-      panel.querySelectorAll("p").forEach((p) => {
-        if (p.textContent.trim().startsWith("*")) {
-          p.textContent = `* ${site.sections.request.totalNote}${b.hasOnRequest ? "; позиции «по запросу» мастер оценит на осмотре" : ""}`;
-        }
-      });
+      if (totalEl) totalEl.textContent = b.total > 0 ? `от ${formatPrice(b.total)}` : "—";
     }
     document.querySelectorAll(".req-row").forEach((row) => {
       const key = row.getAttribute("data-toggle-item");

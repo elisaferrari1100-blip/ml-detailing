@@ -1137,11 +1137,12 @@ html {
   flex-direction: column;
   gap: 1rem;
 }
-#request .req-form-intro {
-  margin: 0;
-  font-size: 14px;
-  line-height: 1.55;
-  color: var(--color-chrome);
+#request .req-total-line .req-total {
+  white-space: nowrap;
+  text-align: right;
+}
+#request .req-standard-wrap + .req-form-slot {
+  margin-top: 1.25rem;
 }
 #request .req-form-fields {
   display: flex;
