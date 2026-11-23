@@ -873,7 +873,8 @@
 
   function renderPanel() {
     const b = booking();
-    const totalLine = b.total > 0 ? `от ${formatPrice(b.total)}` : "—";
+    const hasSum = b.total > 0;
+    const totalLine = hasSum ? `от ${formatPrice(b.total)}` : "";
     return `<aside aria-label="Смета работ" class="req-panel glass p-6 lg:sticky lg:top-24" id="req-panel">
       <div class="flex items-center justify-between gap-3">
         <h3 class="flex items-center gap-2.5 text-xs font-semibold uppercase tracking-[0.28em] text-chrome">
@@ -882,11 +883,11 @@
         <span class="glass rounded-full px-3 py-1 text-[11px] uppercase tracking-[0.14em] text-chrome">${esc(site.brand.short)}</span>
       </div>
       <div id="req-selected">${renderSelectedList()}</div>
-      <div class="mt-6 border-t border-white/10 pt-5">
-        <p class="eyebrow !text-chrome">Расчётная стоимость</p>
-        <p class="mt-3 req-total-line flex items-baseline justify-end">
-          <span class="req-total">${totalLine}</span>
-        </p>
+      <div class="req-total-block mt-6 border-t border-white/10 pt-5">
+        <div class="req-total-line${hasSum ? " req-total-line--has-sum" : ""}">
+          <p class="req-total-label eyebrow !text-chrome">Расчётная стоимость</p>
+          <span class="req-total"${hasSum ? "" : ' aria-hidden="true"'}>${totalLine}</span>
+        </div>
       </div>
       <button type="button" data-go-form class="req-cta mt-6">Оформить заявку${icon("arrow-right", "size-4")}</button>
       <div class="req-standard-wrap mt-6">${renderPriceStandardNote()}</div>
@@ -1116,9 +1117,15 @@
     if (selected) selected.innerHTML = renderSelectedList();
     const panel = document.getElementById("req-panel");
     if (panel) {
+      const line = panel.querySelector(".req-total-line");
       const totalEl = panel.querySelector(".req-total-line .req-total");
       const b = booking();
-      if (totalEl) totalEl.textContent = b.total > 0 ? `от ${formatPrice(b.total)}` : "—";
+      const hasSum = b.total > 0;
+      if (line) line.classList.toggle("req-total-line--has-sum", hasSum);
+      if (totalEl) {
+        totalEl.textContent = hasSum ? `от ${formatPrice(b.total)}` : "";
+        totalEl.setAttribute("aria-hidden", hasSum ? "false" : "true");
+      }
     }
     document.querySelectorAll(".req-row").forEach((row) => {
       const key = row.getAttribute("data-toggle-item");
