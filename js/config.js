@@ -477,8 +477,8 @@ window.ML_SITE = {
    * payload: { name, phone, car, items, total, hasOnRequest }
    */
   leads: {
-    endpoint: "",
-    clientKey: "",
+    endpoint: "https://ml-detailing-leads.mldetailing.workers.dev",
+    clientKey: "7a884a6b690db7871f2ff8d46e68a54efdb04f869425ccde",
   },
 
   async submitLead(payload) {

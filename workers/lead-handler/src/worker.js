@@ -2,11 +2,14 @@ import {
   buildLeadHtml,
   buildLeadPlainText,
   buildTelegramHtml,
+  formatPrice,
   normalizePayload,
 } from "./format-lead.js";
 
 const DEFAULT_ORIGINS =
   "https://mldetailing.ru,https://www.mldetailing.ru,https://elisaferrari1100-blip.github.io,http://127.0.0.1:8095,http://localhost:8095,http://127.0.0.1:8090,http://localhost:8090";
+
+const FORMSUBMIT_ORIGIN = "https://mldetailing.ru";
 
 function parseOrigins(env) {
   const raw = (env.ALLOWED_ORIGINS || DEFAULT_ORIGINS).trim();
@@ -35,9 +38,17 @@ function jsonResponse(request, env, status, data) {
   });
 }
 
+function hasResend(env) {
+  return Boolean(env.RESEND_API_KEY && env.LEAD_EMAIL_TO && env.LEAD_EMAIL_FROM);
+}
+
+function hasFormSubmit(env) {
+  return Boolean(env.LEAD_EMAIL_TO && !env.RESEND_API_KEY);
+}
+
 function channelsConfigured(env) {
   const telegram = Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID);
-  const email = Boolean(env.RESEND_API_KEY && env.LEAD_EMAIL_TO && env.LEAD_EMAIL_FROM);
+  const email = hasResend(env) || hasFormSubmit(env);
   return { telegram, email, any: telegram || email };
 }
 
@@ -62,7 +73,54 @@ async function sendTelegram(env, html) {
   return true;
 }
 
-async function sendEmail(env, subject, html, text) {
+function buildFormSubmitBody(payload, subject) {
+  const body = {
+    _subject: subject,
+    _template: "table",
+    _captcha: false,
+    Имя: payload.name,
+    Телефон: payload.phone,
+  };
+  if (payload.car) body["Авто"] = payload.car;
+  if (payload.items.length) {
+    body["Услуги"] = payload.items
+      .map((item) => {
+        const price = item.price === null ? "по запросу" : `от ${formatPrice(item.price)}`;
+        return `${item.group ? `${item.group}: ` : ""}${item.title} — ${price}`;
+      })
+      .join("; ");
+  } else {
+    body["Услуги"] = "не выбраны (только контакт)";
+  }
+  if (payload.total > 0) {
+    body["Сумма (ориентир)"] = `от ${formatPrice(payload.total)}`;
+  }
+  if (payload.hasOnRequest) {
+    body["Примечание"] = "Есть позиции «по запросу» — уточнить на осмотре.";
+  }
+  return body;
+}
+
+async function sendFormSubmit(env, subject, payload) {
+  const to = encodeURIComponent(String(env.LEAD_EMAIL_TO).trim());
+  const res = await fetch(`https://formsubmit.co/ajax/${to}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      Origin: FORMSUBMIT_ORIGIN,
+      Referer: FORMSUBMIT_ORIGIN,
+    },
+    body: JSON.stringify(buildFormSubmitBody(payload, subject)),
+  });
+  if (!res.ok) {
+    const detail = await res.text().catch(() => "");
+    throw new Error(detail || `FormSubmit ${res.status}`);
+  }
+  return true;
+}
+
+async function sendResend(env, subject, html, text) {
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -82,6 +140,13 @@ async function sendEmail(env, subject, html, text) {
     throw new Error(detail || `Resend ${res.status}`);
   }
   return true;
+}
+
+async function sendEmail(env, subject, html, text, payload) {
+  if (env.RESEND_API_KEY) {
+    return sendResend(env, subject, html, text);
+  }
+  return sendFormSubmit(env, subject, payload);
 }
 
 function checkClientKey(request, env) {
@@ -144,7 +209,7 @@ export default {
 
     if (email) {
       try {
-        await sendEmail(env, subject, emailHtml, emailText);
+        await sendEmail(env, subject, emailHtml, emailText, payload);
         results.email = true;
       } catch (e) {
         errors.push(`email: ${e.message}`);
