@@ -909,7 +909,9 @@ html {
   inset: 0;
   z-index: 4;
   pointer-events: none;
-  background: rgba(0, 0, 0, 0.2);
+  background:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.18) 0%, rgba(0, 0, 0, 0) 24%),
+    rgba(0, 0, 0, 0.38);
 }
 #hero .hero-fade {
   opacity: 0.92;
