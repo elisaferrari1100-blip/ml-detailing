@@ -944,17 +944,18 @@
       ${backdrop("studio-car", 0.5)}
       <div class="container-x">
         <div class="req-layout">
-          <div class="req-split">
-            <div class="req-pricelist min-w-0">
-              <div class="mt-2 lg:mt-0">${renderPills()}</div>
-              <div class="req-list min-w-0" id="req-list">${renderRequestList()}</div>
-            </div>
+          <div class="req-layout-filters mt-2 lg:mt-0">${renderPills()}</div>
+          ${heading({
+            ...site.sections.request,
+            id: "request-title",
+            className: "req-layout-intro req-aside-head max-w-none",
+            leadClass: "mt-3 text-sm md:text-base",
+          })}
+          <div class="req-layout-list req-split min-w-0">
+            <div class="req-list min-w-0" id="req-list">${renderRequestList()}</div>
             ${renderMini()}
           </div>
-          <div class="req-aside">
-            ${heading({ ...site.sections.request, id: "request-title", className: "req-aside-head max-w-none", leadClass: "mt-3 text-sm md:text-base" })}
-            ${renderPanel()}
-          </div>
+          <div class="req-layout-panel req-aside min-w-0">${renderPanel()}</div>
         </div>
       </div>
     </section>`;

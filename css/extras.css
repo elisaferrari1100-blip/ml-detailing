@@ -1010,26 +1010,59 @@ html {
 }
 
 /* ——— Цены ——— */
-#request .req-pricelist > .req-list {
+#request .req-list {
   margin-top: 1.5rem;
 }
 #request .req-layout {
-  display: grid;
+  display: flex;
+  flex-direction: column;
   gap: 1.5rem;
   margin-top: 0.5rem;
 }
+#request .req-layout-filters + .req-layout-intro {
+  margin-top: -0.25rem;
+}
 @media (min-width: 1024px) {
   #request .req-layout {
+    display: grid;
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
-    gap: 2rem;
+    grid-template-areas:
+      "filters intro"
+      "list panel";
+    column-gap: 2rem;
+    row-gap: 1.25rem;
     align-items: start;
   }
-}
-#request .req-aside {
-  min-width: 0;
+  #request .req-layout-filters {
+    grid-area: filters;
+  }
+  #request .req-layout-intro {
+    grid-area: intro;
+    margin-bottom: 0;
+  }
+  #request .req-layout-filters + .req-layout-intro {
+    margin-top: 0;
+  }
+  #request .req-layout-list {
+    grid-area: list;
+  }
+  #request .req-layout-list > .req-list {
+    margin-top: 0;
+  }
+  #request .req-layout-panel {
+    grid-area: panel;
+  }
+  #request .req-layout-panel .req-panel {
+    margin-top: 0;
+  }
 }
 #request .req-aside-head {
-  margin-bottom: 1.25rem;
+  margin-bottom: 0;
+}
+@media (max-width: 1023px) {
+  #request .req-aside-head {
+    margin-bottom: 0.25rem;
+  }
 }
 @media (min-width: 1024px) {
   #request .req-aside-head .display {
