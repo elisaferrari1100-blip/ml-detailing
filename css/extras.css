@@ -1268,7 +1268,6 @@ html {
 #reviews .review-theme {
   letter-spacing: 0.06em;
 }
-#reviews .review-yandex-link,
 #reviews .review-yandex-source {
   display: inline-flex;
   align-items: center;
