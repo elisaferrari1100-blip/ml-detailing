@@ -81,9 +81,9 @@ window.ML_SITE = {
   },
   hero: {
     narrow: {
-      bg: "./images/hero/narrow-bg.webp",
-      width: 900,
-      height: 900,
+      bg: "./images/hero/narrow-bg.webp?v=20261123h",
+      width: 1600,
+      height: 1600,
       alt: "Porsche Panamera GTS в студии ML",
       focusX: 0.5,
       focusY: 0.5,
@@ -91,14 +91,14 @@ window.ML_SITE = {
       textSize: 0.106,
     },
     wide: {
-      bg: "./images/hero/wide-bg.webp",
-      width: 1086,
-      height: 1086,
+      bg: "./images/hero/wide-bg.webp?v=20261123h",
+      width: 2048,
+      height: 2048,
       focusX: 0.5,
       focusY: 0.48,
       textTop: 0.18,
       textSize: 0.106,
-      bg4k: "./images/hero/wide-bg-4k.webp",
+      bg4k: "./images/hero/wide-bg-4k.webp?v=20261123h",
     },
   },
   nav: [
