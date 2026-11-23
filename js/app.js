@@ -20,6 +20,7 @@
     reviewOpen: {},
     mapUnlocked: false,
     baTouched: {},
+    priceGroupOpen: {},
   };
 
   const ICONS = {
@@ -887,6 +888,22 @@
     </aside>`;
   }
 
+  function priceGroupSlug(group) {
+    return group.replace(/\s+/g, "-").toLowerCase();
+  }
+
+  function isPriceGroupOpen(group) {
+    if (state.category !== ALL) return state.category === group;
+    return !!state.priceGroupOpen[group];
+  }
+
+  function togglePriceGroup(group) {
+    if (state.category !== ALL) return;
+    state.priceGroupOpen[group] = !state.priceGroupOpen[group];
+    const list = document.getElementById("req-list");
+    if (list) list.innerHTML = renderRequestList();
+  }
+
   function renderRequestList() {
     const categories =
       state.category === ALL
@@ -896,10 +913,21 @@
       .map((group) => {
         const items = site.priceList.filter((item) => item.group === group);
         if (!items.length) return "";
-        const slug = group.replace(/\s+/g, "-").toLowerCase();
-        return `<section class="req-group" aria-labelledby="req-gr-${slug}">
-          <h3 class="req-group-title" id="req-gr-${slug}">${esc(group)}</h3>
-          <div class="req-group-rows">${items.map((item) => renderPriceRow(item, { hideGroup: true })).join("")}</div>
+        const slug = priceGroupSlug(group);
+        const open = isPriceGroupOpen(group);
+        const accordion = state.category === ALL;
+        const head =
+          accordion
+            ? `<h3 class="req-group-heading">
+              <button type="button" class="req-group-toggle" aria-expanded="${open}" aria-controls="req-gr-body-${slug}" id="req-gr-${slug}" data-req-group-toggle="${esc(group)}">
+                <span class="req-group-title-text">${esc(group)}</span>
+                <span class="req-group-meta" aria-hidden="true">${icon("chevron-down", "req-group-chevron size-5")}</span>
+              </button>
+            </h3>`
+            : `<h3 class="req-group-heading req-group-heading--plain"><span class="req-group-title-text" id="req-gr-${slug}">${esc(group)}</span></h3>`;
+        return `<section class="req-group${open ? " req-group--open" : ""}" data-req-group="${esc(group)}">
+          ${head}
+          <div class="req-group-rows" id="req-gr-body-${slug}" ${open ? "" : "hidden"}>${items.map((item) => renderPriceRow(item, { hideGroup: true })).join("")}</div>
         </section>`;
       })
       .join("");
@@ -1654,13 +1682,20 @@
         goToForm();
         return;
       }
+      const groupToggle = event.target.closest("[data-req-group-toggle]");
+      if (groupToggle) {
+        togglePriceGroup(groupToggle.getAttribute("data-req-group-toggle"));
+        return;
+      }
       const cat = event.target.closest("[data-category]");
       if (cat) {
         state.category = cat.getAttribute("data-category");
-        document.getElementById("req-pills")?.replaceWith(Object.assign(document.createElement("div"), { innerHTML: renderPills() }).firstElementChild);
-        // the replace above loses wrapper — do it properly
-        const pillsHost = document.querySelector("#request .mt-10");
-        if (pillsHost) pillsHost.innerHTML = renderPills();
+        if (state.category !== ALL) state.priceGroupOpen[state.category] = true;
+        const pills = document.getElementById("req-pills");
+        if (pills) {
+          const fresh = Object.assign(document.createElement("div"), { innerHTML: renderPills() }).firstElementChild;
+          pills.replaceWith(fresh);
+        }
         const list = document.getElementById("req-list");
         if (list) list.innerHTML = renderRequestList();
         return;
