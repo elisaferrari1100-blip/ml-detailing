@@ -774,12 +774,12 @@
     }
     return `<ul class="req-sel mt-5 flex flex-col gap-3.5">${b.items
       .map(
-        (item) => `<li class="flex items-start gap-3">
+        (item) => `<li class="req-sel-row flex items-start gap-3">
           <span class="min-w-0 flex-1">
-            <span class="block text-sm text-ink">${esc(item.title)}</span>
-            <span class="mt-0.5 block text-[11px] uppercase tracking-[0.12em] text-chrome">${esc(item.group)}</span>
+            <span class="req-sel-cat">${esc(item.group)}</span>
+            <span class="req-sel-title">${esc(item.title)}</span>
           </span>
-          <span class="text-sm tabular-nums text-ink">${item.price === undefined ? "по запросу" : formatPrice(item.price)}</span>
+          <span class="req-sel-price tabular-nums">${item.price === undefined ? "по запросу" : formatPrice(item.price)}</span>
           <button type="button" data-remove-item="${esc(item.key)}" aria-label="Убрать: ${esc(item.title)}" class="req-x">${icon("x", "size-4")}</button>
         </li>`
       )

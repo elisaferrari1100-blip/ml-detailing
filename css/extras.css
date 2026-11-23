@@ -1105,6 +1105,27 @@ html {
 #request .req-group-rows .req-price {
   font-size: 0.875rem;
 }
+#request .req-sel-cat {
+  display: block;
+  font-family: var(--font-display, "Unbounded", ui-sans-serif, system-ui, sans-serif);
+  font-size: clamp(0.95rem, 0.9rem + 0.15vw, 1.05rem);
+  font-weight: 600;
+  line-height: 1.25;
+  color: var(--color-ink);
+}
+#request .req-sel-title {
+  display: block;
+  margin-top: 0.2rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--color-chrome);
+}
+#request .req-sel-price {
+  flex-shrink: 0;
+  align-self: center;
+  font-size: 0.875rem;
+  color: var(--color-ink);
+}
 #request .req-form-slot {
   margin-top: 1.5rem;
   padding-top: 1.25rem;
