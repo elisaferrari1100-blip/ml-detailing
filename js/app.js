@@ -855,7 +855,7 @@
         type: "submit",
         className: "w-full",
         attrs: state.formSending ? "disabled" : "",
-        children: state.formSending ? "Отправляем…" : "Отправить заявку",
+        children: state.formSending ? "Оформляем…" : "Оформить заявку",
       })}
     </form>`;
   }
@@ -888,7 +888,6 @@
           <span class="req-total"${hasSum ? "" : ' aria-hidden="true"'}>${totalLine}</span>
         </div>
       </div>
-      <button type="button" data-go-form class="req-cta mt-6">Оформить заявку${icon("arrow-right", "size-4")}</button>
       <div class="req-standard-wrap mt-6">${renderPriceStandardNote()}</div>
       <div id="lead-form-slot" class="req-form-slot">${renderForm()}</div>
     </aside>`;
