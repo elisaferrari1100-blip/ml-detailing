@@ -638,26 +638,32 @@
     return `${base.replace(/\/?$/, "/")}reviews/`;
   }
 
+  function reviewYandexUrl(review) {
+    const direct = typeof review.yandexReviewUrl === "string" ? review.yandexReviewUrl.trim() : "";
+    return direct || yandexReviewsPageUrl();
+  }
+
   function renderReviews() {
     if (!site.reviews.length) return "";
     const s = site.reviewSummary;
-    const yandexReviews = yandexReviewsPageUrl();
     const cards = site.reviews
       .map((r) => {
         const open = !!state.reviewOpen[r.key];
         const theme = r.serviceTheme || reviewServiceTheme(r.text);
+        const yandexUrl = reviewYandexUrl(r);
+        const yandexTarget = ' target="_blank" rel="noopener noreferrer"';
         return `<li class="review-card glass flex flex-col gap-3 rounded-2xl p-4 md:gap-4 md:p-6" data-review="${esc(r.key)}">
           <div class="flex items-center gap-3">
             <span aria-hidden="true" class="review-avatar display grid size-10 shrink-0 place-items-center rounded-full text-sm font-semibold text-ink md:size-12">${esc(r.initials)}</span>
             <div class="min-w-0">
               <p class="truncate text-sm font-medium text-ink md:text-base">${esc(r.author)}</p>
-              <p class="flex items-center gap-1.5 text-[13px] text-chrome">${icon("map-pin", "size-3.5")}${esc(r.source)}</p>
+              <p class="flex items-center gap-1.5 text-[13px] text-chrome">${icon("map-pin", "size-3.5")}<a class="review-yandex-source text-chrome underline-offset-2 transition-colors hover:text-amber hover:underline" href="${esc(yandexUrl)}"${yandexTarget} aria-label="Открыть отзыв ${esc(r.author)} на Яндекс Картах">${esc(r.source)}</a></p>
             </div>
           </div>
           <p class="review-theme text-[11px] font-semibold uppercase tracking-wide text-amber md:text-xs">${esc(theme)}</p>
           ${stars(r.rating, `Оценка ${r.rating} из 5`)}
           <blockquote class="review-text text-sm leading-relaxed text-ink/90 md:text-[15px] ${open ? "" : "review-text-clamp"}">${esc(reviewQuote(r)).replace(/\n/g, "<br>")}</blockquote>
-          <a class="review-yandex-link mt-auto text-[13px] font-medium text-amber underline-offset-2 hover:underline" href="${esc(yandexReviews)}" target="_blank" rel="noopener noreferrer">На Яндекс Картах</a>
+          <a class="review-yandex-link mt-auto text-[13px] font-medium text-amber underline-offset-2 hover:underline" href="${esc(yandexUrl)}"${yandexTarget}>На Яндекс Картах</a>
           <button type="button" class="review-toggle self-start text-[13px] font-medium text-amber md:hidden" aria-expanded="${open}" data-toggle-review="${esc(r.key)}">${open ? "Свернуть" : "Читать полностью"}</button>
         </li>`;
       })

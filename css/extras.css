@@ -1218,11 +1218,15 @@ html {
 #reviews .review-theme {
   letter-spacing: 0.06em;
 }
-#reviews .review-yandex-link {
+#reviews .review-yandex-link,
+#reviews .review-yandex-source {
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
   width: fit-content;
+}
+#reviews .review-yandex-source {
+  text-decoration-thickness: from-font;
 }
 @media (prefers-reduced-motion: no-preference) {
   @media (hover: hover) and (pointer: fine) {
