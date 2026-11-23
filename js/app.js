@@ -663,8 +663,7 @@
           <p class="review-theme text-[11px] font-semibold uppercase tracking-wide text-amber md:text-xs">${esc(theme)}</p>
           ${stars(r.rating, `Оценка ${r.rating} из 5`)}
           <blockquote class="review-text text-sm leading-relaxed text-ink/90 md:text-[15px] ${open ? "" : "review-text-clamp"}">${esc(reviewQuote(r)).replace(/\n/g, "<br>")}</blockquote>
-          <a class="review-yandex-link mt-auto text-[13px] font-medium text-amber underline-offset-2 hover:underline" href="${esc(yandexUrl)}"${yandexTarget}>На Яндекс Картах</a>
-          <button type="button" class="review-toggle self-start text-[13px] font-medium text-amber md:hidden" aria-expanded="${open}" data-toggle-review="${esc(r.key)}">${open ? "Свернуть" : "Читать полностью"}</button>
+          <button type="button" class="review-toggle mt-auto self-start text-[13px] font-medium text-amber md:hidden" aria-expanded="${open}" data-toggle-review="${esc(r.key)}">${open ? "Свернуть" : "Читать полностью"}</button>
         </li>`;
       })
       .join("");
