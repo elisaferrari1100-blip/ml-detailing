@@ -4,3 +4,6 @@ RESEND_API_KEY=
 LEAD_EMAIL_TO=
 LEAD_EMAIL_FROM=ML Detailing <onboarding@resend.dev>
 LEAD_CLIENT_KEY=dev-test-key-change-me
+# ВКонтакте: оба поля нужны, иначе канал выключен. Сюда только для локального wrangler dev, файл не коммитить.
+VK_GROUP_TOKEN=
+VK_PEER_ID=

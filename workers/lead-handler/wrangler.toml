@@ -7,9 +7,24 @@ compatibility_date = "2024-11-01"
 ALLOWED_ORIGINS = "https://mldetailing.ru,https://www.mldetailing.ru,https://elisaferrari1100-blip.github.io,http://127.0.0.1:8095,http://localhost:8095"
 LEAD_EMAIL_TO = "danya.becketov@yandex.ru"
 
-# Секреты — только через CLI (не коммитить):
+# Секреты — только через CLI из этой папки. В файл и в git их не писать.
+# Подробно, где взять значения: НАСТРОЙКА.md
+#
+# Telegram:
 #   npx wrangler secret put TELEGRAM_BOT_TOKEN
 #   npx wrangler secret put TELEGRAM_CHAT_ID
-#   npx wrangler secret put RESEND_API_KEY      # опционально; без него почта идёт через FormSubmit
+#
+# ВКонтакте. Канал молчит, пока не заданы ОБА секрета.
+# Ключ сообщества: Управление → Настройки → Работа с API → Создать ключ,
+# галочка «Сообщения». Человек должен сначала сам написать сообществу
+# (или разрешить сообщения) — иначе ВК не примет отправку.
+# VK_PEER_ID — кому слать: id пользователя (vk.com/id123456 → 123456)
+# или 2000000000 + id беседы (ссылка im?sel=c15 → 2000000015).
+#   npx wrangler secret put VK_GROUP_TOKEN
+#   npx wrangler secret put VK_PEER_ID
+#   npx wrangler deploy
+#
+# Почта (необязательно; без ключа Resend письмо идёт через FormSubmit):
+#   npx wrangler secret put RESEND_API_KEY
 #   npx wrangler secret put LEAD_EMAIL_FROM     # только для Resend, например: ML Detailing <notify@mldetailing.ru>
 #   npx wrangler secret put LEAD_CLIENT_KEY     # тот же ключ, что leads.clientKey в js/config.js
