@@ -11,6 +11,10 @@ const DEFAULT_ORIGINS =
 
 const FORMSUBMIT_ORIGIN = "https://mldetailing.ru";
 
+// Актуальная версия из https://dev.vk.com/ru/reference/versions — не секрет.
+const VK_API_VERSION = "5.199";
+const VK_API_URL = "https://api.vk.com/method/messages.send";
+
 function parseOrigins(env) {
   const raw = (env.ALLOWED_ORIGINS || DEFAULT_ORIGINS).trim();
   return raw
@@ -46,10 +50,65 @@ function hasFormSubmit(env) {
   return Boolean(env.LEAD_EMAIL_TO && !env.RESEND_API_KEY);
 }
 
+function hasVk(env) {
+  const token = String(env.VK_GROUP_TOKEN || "").trim();
+  const peerId = String(env.VK_PEER_ID || "").trim();
+  return Boolean(token && peerId);
+}
+
 function channelsConfigured(env) {
   const telegram = Boolean(env.TELEGRAM_BOT_TOKEN && env.TELEGRAM_CHAT_ID);
   const email = hasResend(env) || hasFormSubmit(env);
-  return { telegram, email, any: telegram || email };
+  const vk = hasVk(env);
+  return { telegram, email, vk, any: telegram || email || vk };
+}
+
+function vkRandomId() {
+  const buf = new Uint32Array(1);
+  crypto.getRandomValues(buf);
+  const id = buf[0] & 0x7fffffff;
+  return id === 0 ? 1 : id;
+}
+
+function redactSecret(text, secret) {
+  if (!text || !secret) return text || "";
+  return String(text).split(secret).join("***");
+}
+
+async function sendVk(env, text) {
+  const token = String(env.VK_GROUP_TOKEN).trim();
+  const peerId = String(env.VK_PEER_ID).trim();
+  const body = new URLSearchParams({
+    peer_id: peerId,
+    random_id: String(vkRandomId()),
+    message: text,
+    access_token: token,
+    v: VK_API_VERSION,
+  });
+  const res = await fetch(VK_API_URL, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body,
+  });
+  const raw = await res.text().catch(() => "");
+  if (!res.ok) {
+    throw new Error(redactSecret(raw, token) || `VK ${res.status}`);
+  }
+  let data;
+  try {
+    data = raw ? JSON.parse(raw) : null;
+  } catch {
+    throw new Error("VK invalid json");
+  }
+  if (!data || data.error) {
+    const code = data?.error?.error_code;
+    const msg = data?.error?.error_msg || "VK error";
+    throw new Error(redactSecret(code ? `${code} ${msg}` : msg, token));
+  }
+  if (data.response === undefined || data.response === null) {
+    throw new Error("VK empty response");
+  }
+  return true;
 }
 
 async function sendTelegram(env, html) {
@@ -194,8 +253,8 @@ export default {
     const emailHtml = buildLeadHtml(payload);
     const emailText = buildLeadPlainText(payload);
 
-    const { telegram, email } = channelsConfigured(env);
-    const results = { telegram: false, email: false };
+    const { telegram, email, vk } = channelsConfigured(env);
+    const results = { telegram: false, email: false, vk: false };
     const errors = [];
 
     if (telegram) {
@@ -216,7 +275,16 @@ export default {
       }
     }
 
-    const ok = results.telegram || results.email;
+    if (vk) {
+      try {
+        await sendVk(env, emailText);
+        results.vk = true;
+      } catch (e) {
+        errors.push(`vk: ${e.message}`);
+      }
+    }
+
+    const ok = results.telegram || results.email || results.vk;
     if (!ok) {
       return jsonResponse(request, env, 502, { ok: false, error: "delivery_failed", details: errors });
     }
